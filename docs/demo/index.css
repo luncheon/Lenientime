@@ -99,3 +99,13 @@ th {
 .text-right {
   text-align: right;
 }
+.github-link {
+  display: inline-block;
+  border-radius: 50%;
+  margin-left: .5em;
+  line-height: 0;
+}
+.github-link > img {
+  width: 2em;
+  height: 2em;
+}
