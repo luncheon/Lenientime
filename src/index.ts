@@ -21,7 +21,7 @@ export default class Lenientime {
     if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
       return source
     }
-    pad = String(pad || ' ')
+    pad = pad === undefined || pad === null || pad === '' ? ' ' : String(pad)
     const padLength = maxLength - source.length
     let paddings = pad
     while (paddings.length < padLength) {

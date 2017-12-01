@@ -12,7 +12,7 @@ var Lenientime = /** @class */ (function () {
         if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
             return source;
         }
-        pad = String(pad || ' ');
+        pad = pad === undefined || pad === null || pad === '' ? ' ' : String(pad);
         var padLength = maxLength - source.length;
         var paddings = pad;
         while (paddings.length < padLength) {
