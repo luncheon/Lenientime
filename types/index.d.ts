@@ -1,0 +1,58 @@
+export interface LenientimeLike {
+    readonly h?: number;
+    readonly m?: number;
+    readonly s?: number;
+    readonly S?: number;
+    readonly a?: 'am' | 'pm' | 'AM' | 'PM';
+}
+export default class Lenientime {
+    private _totalMilliseconds;
+    static INVALID: Lenientime;
+    static ZERO: Lenientime;
+    static padStart(source: any, maxLength: number, pad?: string): any;
+    static totalMillisecondsOf({h, m, s, S, a}: LenientimeLike): number;
+    static normalizeMillisecondsInOneDay(milliseconds: number): number;
+    static of(hmsaOrMilliseconds: number | LenientimeLike): Lenientime;
+    static now(): Lenientime;
+    static parse(s: string): Lenientime;
+    private constructor();
+    readonly H: number;
+    readonly h: number;
+    readonly m: number;
+    readonly s: number;
+    readonly S: number;
+    readonly a: string;
+    readonly A: string;
+    readonly aa: string;
+    readonly AA: string;
+    readonly HH: any;
+    readonly _H: any;
+    readonly hh: any;
+    readonly _h: any;
+    readonly mm: any;
+    readonly _m: any;
+    readonly ss: any;
+    readonly _s: any;
+    readonly SSS: any;
+    readonly HHmm: string;
+    readonly HHmmss: string;
+    readonly HHmmssSSS: string;
+    readonly totalMilliseconds: number;
+    readonly totalSeconds: number;
+    readonly totalMinutes: number;
+    readonly valid: boolean;
+    readonly invalid: boolean;
+    toString(): string;
+    format(template: string): string;
+    with({h, m, s, S, a}: LenientimeLike): Lenientime;
+    plus(time: LenientimeLike): Lenientime;
+    minus(time: LenientimeLike): Lenientime;
+    equals(time: LenientimeLike): boolean;
+    compareTo(time: LenientimeLike): number;
+    isBefore(another: LenientimeLike): boolean;
+    isBeforeOrEqual(another: LenientimeLike): boolean;
+    isAfter(another: LenientimeLike): boolean;
+    isAfterOrEqual(another: LenientimeLike): boolean;
+    isBetweenExclusive(start: LenientimeLike, end: LenientimeLike): boolean;
+    isBetweenInclusive(min: LenientimeLike, max: LenientimeLike): boolean;
+}

@@ -1,0 +1,101 @@
+@font-face {
+  font-family: Grundschrift-Punkt;
+  src: url(./assets/fonts/Grundschrift/Grundschrift-Punkt.otf);
+}
+@font-face {
+  font-family: Grundschrift-Normal;
+  src: url(./assets/fonts/Grundschrift/Grundschrift-Normal.otf);
+}
+@font-face {
+  font-family: rounded-x-mgenplus-1mn-regular;
+  src: url(./assets/fonts/rounded-x-mgenplus/rounded-x-mgenplus-1mn-regular.woff2)
+}
+@keyframes whiteout {
+  0% {
+    left: 0;
+    right: 0;
+  }
+  10% {
+    left: 100%;
+    right: 0;
+  }
+  80% {
+    left: 100%;
+    right: 0;
+  }
+  90% {
+    left: 0;
+    right: 100%;
+  }
+}
+body {
+  margin: 24px 0 24px 32px;
+}
+h1 {
+  font-family: Grundschrift-Punkt;
+  font-size: 2.5em;
+  position: relative;
+  display: inline-block;
+  margin: 0;
+}
+h1::before {
+  content: 'Lenientime';
+  font-family: Grundschrift-Normal;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  z-index: -1;
+}
+h1::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  background-color: white;
+  animation: whiteout 10s ease-out infinite;
+}
+input {
+  font-family: rounded-x-mgenplus-1mn-regular, monospace;
+  padding: 0 .4em;
+  font-size: 1em;
+  outline: none;
+  border: 1px solid #ccc;
+  border-radius: .2em;
+  width: 12em;
+}
+input:focus {
+  border-color: #6cf;
+  box-shadow: 0 0 3px #6cf;
+}
+table {
+  border-collapse: collapse;
+}
+td, th {
+  padding: 1px .25em;
+}
+td > input:not(:first-child),
+th > input:not(:first-child) {
+  margin-left: .25em;
+}
+tr > td:first-child,
+tr > th:first-child {
+  border-right: 1px solid #999;
+}
+th {
+  border-bottom: 1px solid #999;
+  text-align: left;
+  padding-bottom: 3px;
+}
+tbody > tr:first-child > td {
+  padding-top: 3px;
+}
+th {
+  vertical-align: bottom;
+}
+.text-right {
+  text-align: right;
+}
