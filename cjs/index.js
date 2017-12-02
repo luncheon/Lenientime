@@ -48,14 +48,23 @@ var Lenientime = /** @class */ (function () {
         if (time instanceof Lenientime) {
             return time._totalMilliseconds;
         }
-        var totalMilliseconds = Lenientime.normalizeMillisecondsInOneDay(Lenientime.firstNumberOf(time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS +
-            Lenientime.firstNumberOf(time.minute, time.minutes, 0) * MINUTE_IN_MILLISECONDS +
-            Lenientime.firstNumberOf(time.second, time.seconds, 0) * SECOND_IN_MILLISECONDS +
-            Lenientime.firstNumberOf(time.millisecond, time.milliseconds, 0));
-        if ((time.am === true || time.pm === false) && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
+        if (time instanceof Array) {
+            time = {
+                h: time[0],
+                m: time[1],
+                s: time[2],
+                ms: time[3],
+            };
+        }
+        var totalMilliseconds = Lenientime.normalizeMillisecondsInOneDay(Lenientime.firstNumberOf(time.h, time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS +
+            Lenientime.firstNumberOf(time.m, time.minute, time.minutes, 0) * MINUTE_IN_MILLISECONDS +
+            Lenientime.firstNumberOf(time.s, time.second, time.seconds, 0) * SECOND_IN_MILLISECONDS +
+            Lenientime.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0));
+        var a = String(time.a).toLowerCase();
+        if ((time.am === true || time.pm === false || a === 'am') && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
             return totalMilliseconds - HALF_DAY_IN_MILLISECONDS;
         }
-        if ((time.pm === true || time.am === false) && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
+        if ((time.pm === true || time.am === false || a === 'pm') && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
             return totalMilliseconds + HALF_DAY_IN_MILLISECONDS;
         }
         return totalMilliseconds;
@@ -64,12 +73,12 @@ var Lenientime = /** @class */ (function () {
         var value = Math.floor(milliseconds) % DAY_IN_MILLISECONDS;
         return value >= 0 ? value : value + DAY_IN_MILLISECONDS;
     };
-    Lenientime.of = function (hmsaOrMilliseconds) {
-        if (typeof hmsaOrMilliseconds === 'number') {
-            return new Lenientime(Lenientime.normalizeMillisecondsInOneDay(hmsaOrMilliseconds));
+    Lenientime.of = function (millisecondsOrArrayOrObject) {
+        if (typeof millisecondsOrArrayOrObject === 'number') {
+            return new Lenientime(Lenientime.normalizeMillisecondsInOneDay(millisecondsOrArrayOrObject));
         }
-        else if (hmsaOrMilliseconds && typeof hmsaOrMilliseconds === 'object') {
-            return new Lenientime(Lenientime.totalMillisecondsOf(hmsaOrMilliseconds));
+        else if (millisecondsOrArrayOrObject && typeof millisecondsOrArrayOrObject === 'object') {
+            return new Lenientime(Lenientime.totalMillisecondsOf(millisecondsOrArrayOrObject));
         }
         else {
             return Lenientime.INVALID;
@@ -114,9 +123,9 @@ var Lenientime = /** @class */ (function () {
             s.match(/^([+-]?[0-9]*\.?[0-9]*):([+-]?[0-9]*\.?[0-9]*)(?::([+-]?[0-9]*\.?[0-9]*))?(am|pm)?$/i);
         if (match) {
             return Lenientime.of({
-                hour: match[1] ? parseFloat(match[1]) : 0,
-                minute: match[2] ? parseFloat(match[2]) : 0,
-                second: match[3] ? parseFloat(match[3]) : 0,
+                h: match[1] ? parseFloat(match[1]) : 0,
+                m: match[2] ? parseFloat(match[2]) : 0,
+                s: match[3] ? parseFloat(match[3]) : 0,
                 am: match[4] ? match[4].toLowerCase() === 'am' ? true : false : undefined,
             });
         }
@@ -341,11 +350,11 @@ var Lenientime = /** @class */ (function () {
     };
     Lenientime.prototype.with = function (time) {
         return Lenientime.of({
-            hour: Lenientime.firstNumberOf(time.hour, time.hours, this.hour),
-            minute: Lenientime.firstNumberOf(time.minute, time.minutes, this.minute),
-            second: Lenientime.firstNumberOf(time.second, time.seconds, this.second),
-            millisecond: Lenientime.firstNumberOf(time.millisecond, time.milliseconds, this.millisecond),
-            am: time.am === true || time.pm === false || undefined,
+            h: Lenientime.firstNumberOf(time.h, time.hour, time.hours, this.hour),
+            m: Lenientime.firstNumberOf(time.m, time.minute, time.minutes, this.minute),
+            s: Lenientime.firstNumberOf(time.s, time.second, time.seconds, this.second),
+            ms: Lenientime.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, this.millisecond),
+            am: time.am === true || time.pm === false || (time.a === 'am' ? true : time.a === 'pm' ? false : undefined),
         });
     };
     Lenientime.prototype.plus = function (time) {
@@ -353,8 +362,8 @@ var Lenientime = /** @class */ (function () {
         return totalMilliseconds === 0 ? this : Lenientime.of(this._totalMilliseconds + totalMilliseconds);
     };
     Lenientime.prototype.minus = function (time) {
-        var totalSeconds = Lenientime.totalMillisecondsOf(time);
-        return totalSeconds === 0 ? this : Lenientime.of(this.totalSeconds - totalSeconds);
+        var totalMilliseconds = Lenientime.totalMillisecondsOf(time);
+        return totalMilliseconds === 0 ? this : Lenientime.of(this._totalMilliseconds - totalMilliseconds);
     };
     Lenientime.prototype.equals = function (time) {
         return this.compareTo(time) === 0;

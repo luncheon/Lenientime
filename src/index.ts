@@ -1,14 +1,20 @@
 export interface LenientimeLike {
+  readonly h?:            number
   readonly hour?:         number
   readonly hours?:        number
+  readonly m?:            number
   readonly minute?:       number
   readonly minutes?:      number
+  readonly s?:            number
   readonly second?:       number
   readonly seconds?:      number
+  readonly S?:            number
+  readonly ms?:           number
   readonly millisecond?:  number
   readonly milliseconds?: number
   readonly am?:           boolean
   readonly pm?:           boolean
+  readonly a?:            'am' | 'pm' | 'AM' | 'PM'
 }
 
 const    SECOND_IN_MILLISECONDS = 1000
@@ -54,20 +60,30 @@ export default class Lenientime {
     }
     return undefined
   }
-  public static totalMillisecondsOf(time: LenientimeLike) {
+
+  public static totalMillisecondsOf(time: LenientimeLike | number[]) {
     if (time instanceof Lenientime) {
-      return time._totalMilliseconds
+      return (time as Lenientime)._totalMilliseconds
+    }
+    if (time instanceof Array) {
+      time = {
+        h:  time[0],
+        m:  time[1],
+        s:  time[2],
+        ms: time[3],
+      }
     }
     const totalMilliseconds = Lenientime.normalizeMillisecondsInOneDay(
-      Lenientime.firstNumberOf(time.  hour, time.  hours, 0)! *   HOUR_IN_MILLISECONDS +
-      Lenientime.firstNumberOf(time.minute, time.minutes, 0)! * MINUTE_IN_MILLISECONDS +
-      Lenientime.firstNumberOf(time.second, time.seconds, 0)! * SECOND_IN_MILLISECONDS +
-      Lenientime.firstNumberOf(time.millisecond, time.milliseconds, 0)!
+      Lenientime.firstNumberOf(time.h, time.  hour, time.  hours, 0)! *   HOUR_IN_MILLISECONDS +
+      Lenientime.firstNumberOf(time.m, time.minute, time.minutes, 0)! * MINUTE_IN_MILLISECONDS +
+      Lenientime.firstNumberOf(time.s, time.second, time.seconds, 0)! * SECOND_IN_MILLISECONDS +
+      Lenientime.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0)!
     )
-    if ((time.am === true || time.pm === false) && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
+    const a = String(time.a).toLowerCase()
+    if ((time.am === true || time.pm === false || a === 'am') && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
       return totalMilliseconds - HALF_DAY_IN_MILLISECONDS
     }
-    if ((time.pm === true || time.am === false) && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
+    if ((time.pm === true || time.am === false || a === 'pm') && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
       return totalMilliseconds + HALF_DAY_IN_MILLISECONDS
     }
     return totalMilliseconds
@@ -78,11 +94,11 @@ export default class Lenientime {
     return value >= 0 ? value : value + DAY_IN_MILLISECONDS
   }
 
-  public static of(hmsaOrMilliseconds: number | LenientimeLike) {
-    if (typeof hmsaOrMilliseconds === 'number') {
-      return new Lenientime(Lenientime.normalizeMillisecondsInOneDay(hmsaOrMilliseconds))
-    } else if (hmsaOrMilliseconds && typeof hmsaOrMilliseconds === 'object') {
-      return new Lenientime(Lenientime.totalMillisecondsOf(hmsaOrMilliseconds))
+  public static of(millisecondsOrArrayOrObject: number | LenientimeLike | number[]) {
+    if (typeof millisecondsOrArrayOrObject === 'number') {
+      return new Lenientime(Lenientime.normalizeMillisecondsInOneDay(millisecondsOrArrayOrObject))
+    } else if (millisecondsOrArrayOrObject && typeof millisecondsOrArrayOrObject === 'object') {
+      return new Lenientime(Lenientime.totalMillisecondsOf(millisecondsOrArrayOrObject))
     } else {
       return Lenientime.INVALID
     }
@@ -131,10 +147,10 @@ export default class Lenientime {
       s.match(/^([+-]?[0-9]*\.?[0-9]*):([+-]?[0-9]*\.?[0-9]*)(?::([+-]?[0-9]*\.?[0-9]*))?(am|pm)?$/i)
     if (match) {
       return Lenientime.of({
-        hour:   match[1] ? parseFloat(match[1]) : 0,
-        minute: match[2] ? parseFloat(match[2]) : 0,
-        second: match[3] ? parseFloat(match[3]) : 0,
-        am:     match[4] ? match[4].toLowerCase() === 'am' ? true : false : undefined,
+        h:  match[1] ? parseFloat(match[1]) : 0,
+        m:  match[2] ? parseFloat(match[2]) : 0,
+        s:  match[3] ? parseFloat(match[3]) : 0,
+        am: match[4] ? match[4].toLowerCase() === 'am' ? true : false : undefined,
       })
     }
     return Lenientime.INVALID
@@ -206,11 +222,11 @@ export default class Lenientime {
 
   public with(time: LenientimeLike) {
     return Lenientime.of({
-      hour:        Lenientime.firstNumberOf(time.  hour, time.  hours, this.  hour),
-      minute:      Lenientime.firstNumberOf(time.minute, time.minutes, this.minute),
-      second:      Lenientime.firstNumberOf(time.second, time.seconds, this.second),
-      millisecond: Lenientime.firstNumberOf(time.millisecond, time.milliseconds, this.millisecond),
-      am:          time.am === true || time.pm === false || undefined,
+      h:  Lenientime.firstNumberOf(time.h, time.  hour, time.  hours, this.  hour),
+      m:  Lenientime.firstNumberOf(time.m, time.minute, time.minutes, this.minute),
+      s:  Lenientime.firstNumberOf(time.s, time.second, time.seconds, this.second),
+      ms: Lenientime.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, this.millisecond),
+      am: time.am === true || time.pm === false || (time.a === 'am' ? true : time.a === 'pm' ? false : undefined),
     })
   }
 
@@ -220,8 +236,8 @@ export default class Lenientime {
   }
 
   public minus(time: LenientimeLike) {
-    const totalSeconds = Lenientime.totalMillisecondsOf(time)
-    return totalSeconds === 0 ? this : Lenientime.of(this.totalSeconds - totalSeconds)
+    const totalMilliseconds = Lenientime.totalMillisecondsOf(time)
+    return totalMilliseconds === 0 ? this : Lenientime.of(this._totalMilliseconds - totalMilliseconds)
   }
 
   public equals(time: LenientimeLike) {

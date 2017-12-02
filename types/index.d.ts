@@ -1,14 +1,20 @@
 export interface LenientimeLike {
+    readonly h?: number;
     readonly hour?: number;
     readonly hours?: number;
+    readonly m?: number;
     readonly minute?: number;
     readonly minutes?: number;
+    readonly s?: number;
     readonly second?: number;
     readonly seconds?: number;
+    readonly S?: number;
+    readonly ms?: number;
     readonly millisecond?: number;
     readonly milliseconds?: number;
     readonly am?: boolean;
     readonly pm?: boolean;
+    readonly a?: 'am' | 'pm' | 'AM' | 'PM';
 }
 export default class Lenientime {
     private _totalMilliseconds;
@@ -18,9 +24,9 @@ export default class Lenientime {
     static padEnd(source: any, maxLength: number, pad?: string): any;
     static _pad(padLength: number, pad?: string): string;
     static firstNumberOf(...args: (any | undefined)[]): number | undefined;
-    static totalMillisecondsOf(time: LenientimeLike): number;
+    static totalMillisecondsOf(time: LenientimeLike | number[]): number;
     static normalizeMillisecondsInOneDay(milliseconds: number): number;
-    static of(hmsaOrMilliseconds: number | LenientimeLike): Lenientime;
+    static of(millisecondsOrArrayOrObject: number | LenientimeLike | number[]): Lenientime;
     static now(): Lenientime;
     static parse(s: string): Lenientime;
     private constructor();
