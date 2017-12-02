@@ -7,6 +7,7 @@
     '12',
     '12am',
     '12pm',
+    '24',
     '123',
     '123pm',
     '1234',
@@ -14,7 +15,7 @@
     '123456',
     '123456am',
     '1.25',
-    '12.5',
+    '25.5',
     '123.5',
     ':',
     '::',
@@ -34,18 +35,19 @@
     '::12',
     '::123',
     '::-1',
-    '::-.75',
+    '::-.124',
     '1:2',
     ':1:2',
     '1::2',
     '1:2:3',
     '２：３４　ｐＭ',
-    'a',
+    'not a time string',
   ];
 
   var formats = [
-    'HH:mm:ss.SSS a',
-    '_h\\h_m\\m_s.SSS\\s AA',
+    'HH:mm:ss.SSS',
+    '_h\\h _m\\m _s.S\\s a',
+    'k:m:s.SS AA'
   ];
 
   var table = document.body.appendChild(document.createElement('table'));

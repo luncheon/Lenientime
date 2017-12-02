@@ -1,9 +1,14 @@
 export interface LenientimeLike {
-  readonly h?: number
-  readonly m?: number
-  readonly s?: number
-  readonly S?: number
-  readonly a?: 'am' | 'pm' | 'AM' | 'PM'
+  readonly hour?:         number
+  readonly hours?:        number
+  readonly minute?:       number
+  readonly minutes?:      number
+  readonly second?:       number
+  readonly seconds?:      number
+  readonly millisecond?:  number
+  readonly milliseconds?: number
+  readonly am?:           boolean
+  readonly pm?:           boolean
 }
 
 const    SECOND_IN_MILLISECONDS = 1000
@@ -21,27 +26,48 @@ export default class Lenientime {
     if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
       return source
     }
+    return Lenientime._pad(maxLength - source.length, pad) + source
+  }
+
+  public static padEnd(source: any, maxLength: number, pad?: string) {
+    source = String(source)
+    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+      return source
+    }
+    return source + Lenientime._pad(maxLength - source.length, pad)
+  }
+
+  public static _pad(padLength: number, pad?: string) {
     pad = pad === undefined || pad === null || pad === '' ? ' ' : String(pad)
-    const padLength = maxLength - source.length
     let paddings = pad
     while (paddings.length < padLength) {
       paddings += pad
     }
-    return paddings.substr(0, padLength) + source
+    return paddings.substr(0, padLength)
   }
 
-  public static totalMillisecondsOf({ h, m, s, S, a }: LenientimeLike) {
+  public static firstNumberOf(...args: (any | undefined)[]) {
+    for (const value of args) {
+      if (typeof value === 'number') {
+        return value
+      }
+    }
+    return undefined
+  }
+  public static totalMillisecondsOf(time: LenientimeLike) {
+    if (time instanceof Lenientime) {
+      return time._totalMilliseconds
+    }
     const totalMilliseconds = Lenientime.normalizeMillisecondsInOneDay(
-      (typeof h === 'number' ? h *   HOUR_IN_MILLISECONDS : 0) +
-      (typeof m === 'number' ? m * MINUTE_IN_MILLISECONDS : 0) +
-      (typeof s === 'number' ? s * SECOND_IN_MILLISECONDS : 0) +
-      (typeof S === 'number' ? S : 0)
+      Lenientime.firstNumberOf(time.  hour, time.  hours, 0)! *   HOUR_IN_MILLISECONDS +
+      Lenientime.firstNumberOf(time.minute, time.minutes, 0)! * MINUTE_IN_MILLISECONDS +
+      Lenientime.firstNumberOf(time.second, time.seconds, 0)! * SECOND_IN_MILLISECONDS +
+      Lenientime.firstNumberOf(time.millisecond, time.milliseconds, 0)!
     )
-    a = a && String(a).toLowerCase() as 'am' | 'pm' | undefined
-    if (a === 'am' && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
+    if ((time.am === true || time.pm === false) && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
       return totalMilliseconds - HALF_DAY_IN_MILLISECONDS
     }
-    if (a === 'pm' && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
+    if ((time.pm === true || time.am === false) && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
       return totalMilliseconds + HALF_DAY_IN_MILLISECONDS
     }
     return totalMilliseconds
@@ -105,10 +131,10 @@ export default class Lenientime {
       s.match(/^([+-]?[0-9]*\.?[0-9]*):([+-]?[0-9]*\.?[0-9]*)(?::([+-]?[0-9]*\.?[0-9]*))?(am|pm)?$/i)
     if (match) {
       return Lenientime.of({
-        h: match[1] ? parseFloat(match[1]) : 0,
-        m: match[2] ? parseFloat(match[2]) : 0,
-        s: match[3] ? parseFloat(match[3]) : 0,
-        a: match[4] as 'am' | 'pm' | undefined,
+        hour:   match[1] ? parseFloat(match[1]) : 0,
+        minute: match[2] ? parseFloat(match[2]) : 0,
+        second: match[3] ? parseFloat(match[3]) : 0,
+        am:     match[4] ? match[4].toLowerCase() === 'am' ? true : false : undefined,
       })
     }
     return Lenientime.INVALID
@@ -117,26 +143,44 @@ export default class Lenientime {
   private constructor(private _totalMilliseconds: number) {
   }
 
-  get H(): number { return Math.floor(this._totalMilliseconds / HOUR_IN_MILLISECONDS) }
-  get h(): number { return (this.H + 11) % 12 + 1 }
-  get m(): number { return Math.floor(this._totalMilliseconds % HOUR_IN_MILLISECONDS / MINUTE_IN_MILLISECONDS) }
-  get s(): number { return Math.floor(this._totalMilliseconds % MINUTE_IN_MILLISECONDS / SECOND_IN_MILLISECONDS) }
-  get S(): number { return this._totalMilliseconds % SECOND_IN_MILLISECONDS }
+  get hour():         number { return Math.floor(this._totalMilliseconds / HOUR_IN_MILLISECONDS) }
+  get hour12():       number { return (this.hour + 11) % 12 + 1 }
+  get minute():       number { return Math.floor(this._totalMilliseconds % HOUR_IN_MILLISECONDS / MINUTE_IN_MILLISECONDS) }
+  get second():       number { return Math.floor(this._totalMilliseconds % MINUTE_IN_MILLISECONDS / SECOND_IN_MILLISECONDS) }
+  get millisecond():  number { return this._totalMilliseconds % SECOND_IN_MILLISECONDS }
+  get am():          boolean { return this.hour < 12 }
+  get pm():          boolean { return this.hour >= 12 }
 
-  get a()         { return this.invalid ? '--'   : this.H < 12 ? 'am' : 'pm' }
-  get A()         { return this.invalid ? '--'   : this.H < 12 ? 'AM' : 'PM' }
-  get aa()        { return this.invalid ? '----' : this.H < 12 ? 'a.m.' : 'p.m.' }
-  get AA()        { return this.invalid ? '----' : this.H < 12 ? 'A.M.' : 'P.M.' }
+  get hours()        { return this.hour }
+  get hours12()      { return this.hour12 }
+  get minutes()      { return this.minute }
+  get seconds()      { return this.second }
+  get milliseconds() { return this.millisecond }
 
-  get HH()        { return this.invalid ? '--'   : Lenientime.padStart(this.H, 2, '0') }
-  get _H()        { return this.invalid ? '--'   : Lenientime.padStart(this.H, 2, ' ') }
-  get hh()        { return this.invalid ? '--'   : Lenientime.padStart(this.h, 2, '0') }
-  get _h()        { return this.invalid ? '--'   : Lenientime.padStart(this.h, 2, ' ') }
-  get mm()        { return this.invalid ? '--'   : Lenientime.padStart(this.m, 2, '0') }
-  get _m()        { return this.invalid ? '--'   : Lenientime.padStart(this.m, 2, ' ') }
-  get ss()        { return this.invalid ? '--'   : Lenientime.padStart(this.s, 2, '0') }
-  get _s()        { return this.invalid ? '--'   : Lenientime.padStart(this.s, 2, ' ') }
-  get SSS()       { return this.invalid ? '---'  : Lenientime.padStart(this.S, 3, '0') }
+  get H()   { return this.invalid ? '-'   : String(this.hour) }
+  get h()   { return this.invalid ? '-'   : String(this.hour12) }
+  get k()   { return this.invalid ? '-'   : String((this.hour + 23) % 24 + 1) }
+  get m()   { return this.invalid ? '-'   : String(this.minute) }
+  get s()   { return this.invalid ? '-'   : String(this.second) }
+  get S()   { return this.invalid ? '-'   : String(Math.floor(this.millisecond / 100)) }
+  get SS()  { return this.invalid ? '--'  : String(Lenientime.padEnd(Math.floor(this.millisecond / 10), 2, '0')) }
+  get SSS() { return this.invalid ? '---' : String(Lenientime.padEnd(this.millisecond, 3, '0')) }
+
+  get a()   { return this.invalid ? '--'   : this.am ? 'am' : 'pm' }
+  get A()   { return this.invalid ? '--'   : this.am ? 'AM' : 'PM' }
+  get aa()  { return this.invalid ? '----' : this.am ? 'a.m.' : 'p.m.' }
+  get AA()  { return this.invalid ? '----' : this.am ? 'A.M.' : 'P.M.' }
+
+  get HH()  { return this.invalid ? '--'   : Lenientime.padStart(this.H, 2, '0') }
+  get _H()  { return this.invalid ? '--'   : Lenientime.padStart(this.H, 2, ' ') }
+  get hh()  { return this.invalid ? '--'   : Lenientime.padStart(this.h, 2, '0') }
+  get _h()  { return this.invalid ? '--'   : Lenientime.padStart(this.h, 2, ' ') }
+  get kk()  { return this.invalid ? '--'   : Lenientime.padStart(this.k, 2, '0') }
+  get _k()  { return this.invalid ? '--'   : Lenientime.padStart(this.k, 2, ' ') }
+  get mm()  { return this.invalid ? '--'   : Lenientime.padStart(this.m, 2, '0') }
+  get _m()  { return this.invalid ? '--'   : Lenientime.padStart(this.m, 2, ' ') }
+  get ss()  { return this.invalid ? '--'   : Lenientime.padStart(this.s, 2, '0') }
+  get _s()  { return this.invalid ? '--'   : Lenientime.padStart(this.s, 2, ' ') }
 
   get HHmm()      { return this.HH     + ':' + this.mm }
   get HHmmss()    { return this.HHmm   + ':' + this.ss }
@@ -155,18 +199,18 @@ export default class Lenientime {
 
   public format(template: string) {
     return String(template).replace(
-      /\\.|HH?|hh?|mm?|ss?|SSS|S|AA?|aa?|_H|_h|_m|_s/g,
+      /\\.|HH?|hh?|kk?|mm?|ss?|S{1,3}|AA?|aa?|_H|_h|_k|_m|_s/g,
       token => token[0] === '\\' ? token[1] : this[token as keyof this]
     )
   }
 
-  public with({ h, m, s, S, a }: LenientimeLike) {
+  public with(time: LenientimeLike) {
     return Lenientime.of({
-      h: typeof h === 'number' ? h : this.H,
-      m: typeof m === 'number' ? m : this.m,
-      s: typeof s === 'number' ? s : this.s,
-      S: typeof S === 'number' ? S : this.S,
-      a,
+      hour:        Lenientime.firstNumberOf(time.  hour, time.  hours, this.  hour),
+      minute:      Lenientime.firstNumberOf(time.minute, time.minutes, this.minute),
+      second:      Lenientime.firstNumberOf(time.second, time.seconds, this.second),
+      millisecond: Lenientime.firstNumberOf(time.millisecond, time.milliseconds, this.millisecond),
+      am:          time.am === true || time.pm === false || undefined,
     })
   }
 
