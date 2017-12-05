@@ -1,3 +1,10 @@
 {
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "search.exclude": {
+    "**/node_modules": true,
+    "cjs": true,
+    "es": true,
+    "umd": true,
+    "types": true
+  }
 }

@@ -32,6 +32,12 @@
     right: 100%;
   }
 }
+:root {
+  box-sizing: border-box;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
 body {
   margin: 24px 0 24px 32px;
 }
@@ -67,13 +73,18 @@ input {
   padding: 0 .4em;
   font-size: 1em;
   outline: none;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   border-radius: .2em;
   width: 12em;
+  background-color: transparent;
+  font-size: 93.75%;
 }
 input:focus {
   border-color: #6cf;
   box-shadow: 0 0 3px #6cf;
+}
+.input, .format {
+  border: 2px solid #ccc;
 }
 table {
   border-collapse: collapse;
@@ -89,19 +100,18 @@ tr > td:first-child,
 tr > th:first-child {
   border-right: 1px solid #999;
 }
-th {
+thead > tr:last-child > th {
   border-bottom: 1px solid #999;
-  text-align: left;
   padding-bottom: 3px;
 }
 tbody > tr:first-child > td {
   padding-top: 3px;
 }
+tbody > tr:nth-child(even) > td {
+  background-color: #eee;
+}
 th {
   vertical-align: bottom;
-}
-.text-right {
-  text-align: right;
 }
 .github-link {
   display: inline-block;
