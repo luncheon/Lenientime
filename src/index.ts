@@ -163,9 +163,6 @@ export default class Lenientime implements LenientimeLike {
       return Lenientime.ZERO
     }
     const match =
-      // simple decimal: assume as hour
-      s.match(/^([0-9]*\.[0-9]*)()()()(am|pm)?$/i) ||
-
       // simple integer: complete colons
       //  1           -> 01:00:00.000
       //  12          -> 12:00:00.000
@@ -178,7 +175,10 @@ export default class Lenientime implements LenientimeLike {
       //  123456789   -> 12:34:56.789
       //  1pm         -> 13:00:00.000
       //  123456am    -> 00:34:56.000
-      s.match(/^([0-9]{1,2})([0-9]{2})?([0-9]{2})?([0-9]*)(am|pm)?$/i) ||
+      s.match(/^([0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(am|pm)?$/i) ||
+
+      // simple decimal: assume as hour
+      s.match(/^([0-9]*\.[0-9]*)()()()(am|pm)?$/i) ||
 
       // colons included: split parts
       //  1:          -> 01:00:00.000

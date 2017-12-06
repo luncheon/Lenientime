@@ -18,17 +18,38 @@
     "watch_": "rollup -c -w",
     "clean": "rimraf umd cjs es types",
     "lint": "tslint -p .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "WTFPL",
   "devDependencies": {
+    "@types/jest": "^21.1.8",
+    "jest": "^21.2.1",
     "rimraf": "^2.6.2",
     "rollup": "^0.52.0",
+    "ts-jest": "^21.2.4",
     "tslint": "^5.8.0",
     "typescript": "^2.6.2",
     "uglify-js": "^3.2.0",
     "umd": "^3.0.1"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/*.test.ts"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+      "<rootDir>/src/**/*.test.ts"
+    ],
+    "transform": {
+      "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    }
   }
 }
