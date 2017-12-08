@@ -1,9 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/** @hidden */
 var SECOND_IN_MILLISECONDS = 1000;
+/** @hidden */
 var MINUTE_IN_MILLISECONDS = SECOND_IN_MILLISECONDS * 60;
+/** @hidden */
 var HOUR_IN_MILLISECONDS = MINUTE_IN_MILLISECONDS * 60;
+/** @hidden */
 var HALF_DAY_IN_MILLISECONDS = HOUR_IN_MILLISECONDS * 12;
+/** @hidden */
 var DAY_IN_MILLISECONDS = HOUR_IN_MILLISECONDS * 24;
 var Lenientime = /** @class */ (function () {
     function Lenientime(_totalMilliseconds) {
@@ -30,100 +35,10 @@ var Lenientime = /** @class */ (function () {
         return Lenientime.of(Date.now());
     };
     Lenientime.min = function () {
-        return this.reduce(arguments, function (min, current) { return min.invalid || current.isBefore(min) ? current : min; });
+        return this._reduce(arguments, function (min, current) { return min.invalid || current.isBefore(min) ? current : min; });
     };
     Lenientime.max = function () {
-        return this.reduce(arguments, function (max, current) { return max.invalid || current.isAfter(max) ? current : max; });
-    };
-    Lenientime.reduce = function (source, callback, initialValue) {
-        if (initialValue === void 0) { initialValue = Lenientime.INVALID; }
-        var result = initialValue;
-        for (var i = 0, len = source.length; i < len; i++) {
-            var current = Lenientime.of(source[i]);
-            if (current.valid) {
-                result = callback(result, current, i, source);
-            }
-        }
-        return result;
-    };
-    Lenientime.padStart = function (source, maxLength, pad) {
-        source = String(source);
-        if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
-            return source;
-        }
-        return Lenientime._pad(maxLength - source.length, pad) + source;
-    };
-    Lenientime.padEnd = function (source, maxLength, pad) {
-        source = String(source);
-        if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
-            return source;
-        }
-        return source + Lenientime._pad(maxLength - source.length, pad);
-    };
-    Lenientime._pad = function (padLength, pad) {
-        pad = pad === undefined || pad === null || pad === '' ? ' ' : String(pad);
-        var paddings = pad;
-        while (paddings.length < padLength) {
-            paddings += pad;
-        }
-        return paddings.substr(0, padLength);
-    };
-    Lenientime.firstNumberOf = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        for (var _a = 0, args_1 = args; _a < args_1.length; _a++) {
-            var value = args_1[_a];
-            if (typeof value === 'number') {
-                return value;
-            }
-            if (typeof value === 'string') {
-                var parsed = parseFloat(value);
-                if (isFinite(parsed)) {
-                    return parsed;
-                }
-            }
-        }
-        return undefined;
-    };
-    Lenientime._totalMillisecondsOf = function (time) {
-        if (time instanceof Lenientime) {
-            return time._totalMilliseconds;
-        }
-        if (typeof time === 'number') {
-            return time;
-        }
-        if (typeof time === 'string') {
-            return Lenientime.parse(time)._totalMilliseconds;
-        }
-        if (time instanceof Array) {
-            time = {
-                h: time[0],
-                m: time[1],
-                s: time[2],
-                ms: time[3],
-            };
-        }
-        if (time && typeof time === 'object') {
-            var totalMilliseconds = Lenientime._normalizeMillisecondsInOneDay(Lenientime.firstNumberOf(time.h, time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS +
-                Lenientime.firstNumberOf(time.m, time.minute, time.minutes, 0) * MINUTE_IN_MILLISECONDS +
-                Lenientime.firstNumberOf(time.s, time.second, time.seconds, 0) * SECOND_IN_MILLISECONDS +
-                Lenientime.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0));
-            var a = String(time.a).toLowerCase();
-            if ((time.am === true || time.pm === false || a === 'am') && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
-                return totalMilliseconds - HALF_DAY_IN_MILLISECONDS;
-            }
-            if ((time.pm === true || time.am === false || a === 'pm') && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
-                return totalMilliseconds + HALF_DAY_IN_MILLISECONDS;
-            }
-            return totalMilliseconds;
-        }
-        return NaN;
-    };
-    Lenientime._normalizeMillisecondsInOneDay = function (milliseconds) {
-        var value = Math.floor(milliseconds) % DAY_IN_MILLISECONDS;
-        return value >= 0 ? value : value + DAY_IN_MILLISECONDS;
+        return this._reduce(arguments, function (max, current) { return max.invalid || current.isAfter(max) ? current : max; });
     };
     Lenientime.parse = function (s) {
         s = s && String(s)
@@ -173,6 +88,92 @@ var Lenientime = /** @class */ (function () {
             });
         }
         return Lenientime.INVALID;
+    };
+    Lenientime.padStart = function (source, maxLength, pad) {
+        source = String(source);
+        if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+            return source;
+        }
+        return Lenientime._pad(maxLength - source.length, pad) + source;
+    };
+    Lenientime.padEnd = function (source, maxLength, pad) {
+        source = String(source);
+        if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+            return source;
+        }
+        return source + Lenientime._pad(maxLength - source.length, pad);
+    };
+    Lenientime.firstNumberOf = function () {
+        for (var i = 0, len = arguments.length; i < len; ++i) {
+            var value = arguments[i];
+            if (typeof value === 'number') {
+                return value;
+            }
+            if (typeof value === 'string') {
+                var parsed = parseFloat(value);
+                if (isFinite(parsed)) {
+                    return parsed;
+                }
+            }
+        }
+        return undefined;
+    };
+    Lenientime._normalizeMillisecondsInOneDay = function (milliseconds) {
+        var value = Math.floor(milliseconds) % DAY_IN_MILLISECONDS;
+        return value >= 0 ? value : value + DAY_IN_MILLISECONDS;
+    };
+    Lenientime._totalMillisecondsOf = function (time) {
+        if (time instanceof Lenientime) {
+            return time._totalMilliseconds;
+        }
+        if (typeof time === 'number') {
+            return time;
+        }
+        if (typeof time === 'string') {
+            return Lenientime.parse(time)._totalMilliseconds;
+        }
+        if (time instanceof Array) {
+            time = {
+                h: time[0],
+                m: time[1],
+                s: time[2],
+                ms: time[3],
+            };
+        }
+        if (time && typeof time === 'object') {
+            var totalMilliseconds = Lenientime._normalizeMillisecondsInOneDay(Lenientime.firstNumberOf(time.h, time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS +
+                Lenientime.firstNumberOf(time.m, time.minute, time.minutes, 0) * MINUTE_IN_MILLISECONDS +
+                Lenientime.firstNumberOf(time.s, time.second, time.seconds, 0) * SECOND_IN_MILLISECONDS +
+                Lenientime.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0));
+            var a = String(time.a).toLowerCase();
+            if ((time.am === true || time.pm === false || a === 'am') && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
+                return totalMilliseconds - HALF_DAY_IN_MILLISECONDS;
+            }
+            if ((time.pm === true || time.am === false || a === 'pm') && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
+                return totalMilliseconds + HALF_DAY_IN_MILLISECONDS;
+            }
+            return totalMilliseconds;
+        }
+        return NaN;
+    };
+    Lenientime._pad = function (padLength, pad) {
+        pad = pad === undefined || pad === null || pad === '' ? ' ' : String(pad);
+        var paddings = pad;
+        while (paddings.length < padLength) {
+            paddings += pad;
+        }
+        return paddings.substr(0, padLength);
+    };
+    Lenientime._reduce = function (source, callback, initialValue) {
+        if (initialValue === void 0) { initialValue = Lenientime.INVALID; }
+        var result = initialValue;
+        for (var i = 0, len = source.length; i < len; i++) {
+            var current = Lenientime.of(source[i]);
+            if (current.valid) {
+                result = callback(result, current, i, source);
+            }
+        }
+        return result;
     };
     Object.defineProperty(Lenientime.prototype, "hour", {
         get: function () { return Math.floor(this._totalMilliseconds / HOUR_IN_MILLISECONDS); },

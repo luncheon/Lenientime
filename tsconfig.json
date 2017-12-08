@@ -2,6 +2,7 @@
   "compilerOptions": {
     "outDir": "./cjs",
     "target": "es5",
+    "module": "commonjs",
     "moduleResolution": "node",
     "removeComments": false,
     "preserveConstEnums": true,

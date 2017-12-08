@@ -10,10 +10,11 @@
   "unpkg": "./umd/lenientime.min.js",
   "scripts": {
     "rebuild": "npm run clean && npm run build",
-    "build": "npm run lint && npm run build:umd && npm run build:cjs && npm run build:es",
+    "build": "npm run lint && npm run build:umd && npm run build:cjs && npm run build:es && npm run build:doc && npm test",
     "build:umd": "rollup -c && uglifyjs -m -o umd/lenientime.min.js umd/lenientime.js",
     "build:cjs": "tsc -p .",
     "build:es": "tsc -p . -m es2015 --outDir ./es -d --declarationDir ./types",
+    "build:doc": "typedoc --mode file --name Lenientime --theme minimal --excludeExternals --excludePrivate --out docs/api/ --exclude **/*.test.ts src",
     "watch": "echo \"Rollup watch crashes in cmd/PowerShell on windows. see https://github.com/rollup/rollup/issues/1739\" && exit 1",
     "watch_": "rollup -c -w",
     "clean": "rimraf umd cjs es types",
@@ -30,6 +31,7 @@
     "rollup": "^0.52.0",
     "ts-jest": "^21.2.4",
     "tslint": "^5.8.0",
+    "typedoc": "^0.9.0",
     "typescript": "^2.6.2",
     "uglify-js": "^3.2.0",
     "umd": "^3.0.1"

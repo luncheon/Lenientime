@@ -12,9 +12,9 @@ export interface LenientimeLike {
     readonly ms?: string | number;
     readonly millisecond?: string | number;
     readonly milliseconds?: string | number;
+    readonly a?: 'am' | 'pm' | 'AM' | 'PM' | '--';
     readonly am?: boolean;
     readonly pm?: boolean;
-    readonly a?: 'am' | 'pm' | 'AM' | 'PM' | '--';
 }
 export declare type LenientimeParsable = Lenientime | LenientimeLike | number | number[] | string;
 export default class Lenientime implements LenientimeLike {
@@ -25,14 +25,14 @@ export default class Lenientime implements LenientimeLike {
     static now(): Lenientime;
     static min(...times: LenientimeParsable[]): Lenientime;
     static max(...times: LenientimeParsable[]): Lenientime;
-    static reduce<TLenientimeArrayLike extends ArrayLike<LenientimeParsable>>(source: TLenientimeArrayLike, callback: (previousValue: Lenientime, currentValue: Lenientime, currentIndex: number, source: TLenientimeArrayLike) => Lenientime, initialValue?: Lenientime): Lenientime;
+    static parse(s: string): Lenientime;
     static padStart(source: any, maxLength: number, pad?: string): any;
     static padEnd(source: any, maxLength: number, pad?: string): any;
-    static _pad(padLength: number, pad?: string): string;
     static firstNumberOf(...args: (any | undefined)[]): number | undefined;
-    static _totalMillisecondsOf(time: LenientimeParsable): number;
-    static _normalizeMillisecondsInOneDay(milliseconds: number): number;
-    static parse(s: string): Lenientime;
+    private static _normalizeMillisecondsInOneDay(milliseconds);
+    private static _totalMillisecondsOf(time);
+    private static _pad(padLength, pad?);
+    private static _reduce<TLenientimeArrayLike>(source, callback, initialValue?);
     private constructor();
     readonly hour: number;
     readonly hour12: number;

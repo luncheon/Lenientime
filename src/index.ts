@@ -12,17 +12,22 @@ export interface LenientimeLike {
   readonly ms?:           string | number
   readonly millisecond?:  string | number
   readonly milliseconds?: string | number
+  readonly a?:            'am' | 'pm' | 'AM' | 'PM' | '--'
   readonly am?:           boolean
   readonly pm?:           boolean
-  readonly a?:            'am' | 'pm' | 'AM' | 'PM' | '--'
 }
 
 export type LenientimeParsable = Lenientime | LenientimeLike | number | number[] | string
 
+/** @hidden */
 const    SECOND_IN_MILLISECONDS = 1000
+/** @hidden */
 const    MINUTE_IN_MILLISECONDS = SECOND_IN_MILLISECONDS * 60
+/** @hidden */
 const      HOUR_IN_MILLISECONDS = MINUTE_IN_MILLISECONDS * 60
+/** @hidden */
 const  HALF_DAY_IN_MILLISECONDS =   HOUR_IN_MILLISECONDS * 12
+/** @hidden */
 const       DAY_IN_MILLISECONDS =   HOUR_IN_MILLISECONDS * 24
 
 export default class Lenientime implements LenientimeLike {
@@ -49,109 +54,12 @@ export default class Lenientime implements LenientimeLike {
 
   public static min(...times: LenientimeParsable[]): Lenientime
   public static min() {
-    return this.reduce(arguments, (min, current) => min.invalid || current.isBefore(min) ? current : min)
+    return this._reduce(arguments, (min, current) => min.invalid || current.isBefore(min) ? current : min)
   }
 
   public static max(...times: LenientimeParsable[]): Lenientime
   public static max() {
-    return this.reduce(arguments, (max, current) => max.invalid || current.isAfter(max) ? current : max)
-  }
-
-  public static reduce<TLenientimeArrayLike extends ArrayLike<LenientimeParsable>>(
-    source: TLenientimeArrayLike,
-    callback: (previousValue: Lenientime, currentValue: Lenientime, currentIndex: number, source: TLenientimeArrayLike) => Lenientime,
-    initialValue = Lenientime.INVALID
-  ) {
-    let result = initialValue
-    for (let i = 0, len = source.length; i < len; i++) {
-      const current = Lenientime.of(source[i])
-      if (current.valid) {
-        result = callback(result, current, i, source)
-      }
-    }
-    return result
-  }
-
-  public static padStart(source: any, maxLength: number, pad?: string) {
-    source = String(source)
-    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
-      return source
-    }
-    return Lenientime._pad(maxLength - source.length, pad) + source
-  }
-
-  public static padEnd(source: any, maxLength: number, pad?: string) {
-    source = String(source)
-    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
-      return source
-    }
-    return source + Lenientime._pad(maxLength - source.length, pad)
-  }
-
-  public static _pad(padLength: number, pad?: string) {
-    pad = pad === undefined || pad === null || pad === '' ? ' ' : String(pad)
-    let paddings = pad
-    while (paddings.length < padLength) {
-      paddings += pad
-    }
-    return paddings.substr(0, padLength)
-  }
-
-  public static firstNumberOf(...args: (any | undefined)[]) {
-    for (const value of args) {
-      if (typeof value === 'number') {
-        return value
-      }
-      if (typeof value === 'string') {
-        const parsed = parseFloat(value)
-        if (isFinite(parsed)) {
-          return parsed
-        }
-      }
-    }
-    return undefined
-  }
-
-  public static _totalMillisecondsOf(time: LenientimeParsable) {
-    if (time instanceof Lenientime) {
-      return (time as Lenientime)._totalMilliseconds
-    }
-    if (typeof time === 'number') {
-      return time
-    }
-    if (typeof time === 'string') {
-      return Lenientime.parse(time)._totalMilliseconds
-    }
-    if (time instanceof Array) {
-      time = {
-        h:  time[0],
-        m:  time[1],
-        s:  time[2],
-        ms: time[3],
-      }
-    }
-    if (time && typeof time === 'object') {
-      const totalMilliseconds = Lenientime._normalizeMillisecondsInOneDay(
-        Lenientime.firstNumberOf(time.h, time.  hour, time.  hours, 0)! *   HOUR_IN_MILLISECONDS +
-        Lenientime.firstNumberOf(time.m, time.minute, time.minutes, 0)! * MINUTE_IN_MILLISECONDS +
-        Lenientime.firstNumberOf(time.s, time.second, time.seconds, 0)! * SECOND_IN_MILLISECONDS +
-        Lenientime.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0)!
-      )
-      const a = String(time.a).toLowerCase()
-      if ((time.am === true || time.pm === false || a === 'am') && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
-        return totalMilliseconds - HALF_DAY_IN_MILLISECONDS
-      }
-      if ((time.pm === true || time.am === false || a === 'pm') && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
-        return totalMilliseconds + HALF_DAY_IN_MILLISECONDS
-      }
-      return totalMilliseconds
-    }
-    return NaN
-  }
-
-  public static _normalizeMillisecondsInOneDay(milliseconds: number) {
-    const value = Math.floor(milliseconds) % DAY_IN_MILLISECONDS
-    return value >= 0 ? value : value + DAY_IN_MILLISECONDS
+    return this._reduce(arguments, (max, current) => max.invalid || current.isAfter(max) ? current : max)
   }
 
   public static parse(s: string) {
@@ -205,6 +113,105 @@ export default class Lenientime implements LenientimeLike {
       })
     }
     return Lenientime.INVALID
+  }
+
+  public static padStart(source: any, maxLength: number, pad?: string) {
+    source = String(source)
+    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+      return source
+    }
+    return Lenientime._pad(maxLength - source.length, pad) + source
+  }
+
+  public static padEnd(source: any, maxLength: number, pad?: string) {
+    source = String(source)
+    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+      return source
+    }
+    return source + Lenientime._pad(maxLength - source.length, pad)
+  }
+
+  public static firstNumberOf(...args: (any | undefined)[]): number | undefined
+  public static firstNumberOf() {
+    for (let i = 0, len = arguments.length; i < len; ++i) {
+      const value = arguments[i]
+      if (typeof value === 'number') {
+        return value
+      }
+      if (typeof value === 'string') {
+        const parsed = parseFloat(value)
+        if (isFinite(parsed)) {
+          return parsed
+        }
+      }
+    }
+    return undefined
+  }
+
+  private static _normalizeMillisecondsInOneDay(milliseconds: number) {
+    const value = Math.floor(milliseconds) % DAY_IN_MILLISECONDS
+    return value >= 0 ? value : value + DAY_IN_MILLISECONDS
+  }
+
+  private static _totalMillisecondsOf(time: LenientimeParsable) {
+    if (time instanceof Lenientime) {
+      return (time as Lenientime)._totalMilliseconds
+    }
+    if (typeof time === 'number') {
+      return time
+    }
+    if (typeof time === 'string') {
+      return Lenientime.parse(time)._totalMilliseconds
+    }
+    if (time instanceof Array) {
+      time = {
+        h:  time[0],
+        m:  time[1],
+        s:  time[2],
+        ms: time[3],
+      }
+    }
+    if (time && typeof time === 'object') {
+      const totalMilliseconds = Lenientime._normalizeMillisecondsInOneDay(
+        Lenientime.firstNumberOf(time.h, time.  hour, time.  hours, 0)! *   HOUR_IN_MILLISECONDS +
+        Lenientime.firstNumberOf(time.m, time.minute, time.minutes, 0)! * MINUTE_IN_MILLISECONDS +
+        Lenientime.firstNumberOf(time.s, time.second, time.seconds, 0)! * SECOND_IN_MILLISECONDS +
+        Lenientime.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0)!
+      )
+      const a = String(time.a).toLowerCase()
+      if ((time.am === true || time.pm === false || a === 'am') && totalMilliseconds >= HALF_DAY_IN_MILLISECONDS) {
+        return totalMilliseconds - HALF_DAY_IN_MILLISECONDS
+      }
+      if ((time.pm === true || time.am === false || a === 'pm') && totalMilliseconds < HALF_DAY_IN_MILLISECONDS) {
+        return totalMilliseconds + HALF_DAY_IN_MILLISECONDS
+      }
+      return totalMilliseconds
+    }
+    return NaN
+  }
+
+  private static _pad(padLength: number, pad?: string) {
+    pad = pad === undefined || pad === null || pad === '' ? ' ' : String(pad)
+    let paddings = pad
+    while (paddings.length < padLength) {
+      paddings += pad
+    }
+    return paddings.substr(0, padLength)
+  }
+
+  private static _reduce<TLenientimeArrayLike extends ArrayLike<LenientimeParsable>>(
+    source: TLenientimeArrayLike,
+    callback: (previousValue: Lenientime, currentValue: Lenientime, currentIndex: number, source: TLenientimeArrayLike) => Lenientime,
+    initialValue = Lenientime.INVALID
+  ) {
+    let result = initialValue
+    for (let i = 0, len = source.length; i < len; i++) {
+      const current = Lenientime.of(source[i])
+      if (current.valid) {
+        result = callback(result, current, i, source)
+      }
+    }
+    return result
   }
 
   private constructor(private _totalMilliseconds: number) {
