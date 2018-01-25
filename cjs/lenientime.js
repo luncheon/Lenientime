@@ -1,116 +1,7 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.lenientime = factory());
-}(this, (function () { 'use strict';
-
-function padStart(source, maxLength, pad) {
-    source = String(source);
-    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
-        return source;
-    }
-    return _pad(maxLength - source.length, pad) + source;
-}
-function padEnd(source, maxLength, pad) {
-    source = String(source);
-    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
-        return source;
-    }
-    return source + _pad(maxLength - source.length, pad);
-}
-function _pad(padLength, pad) {
-    pad = pad === undefined || pad === null || pad === '' ? ' ' : String(pad);
-    var paddings = pad;
-    while (paddings.length < padLength) {
-        paddings += pad;
-    }
-    return paddings.substr(0, padLength);
-}
-function firstNumberOf() {
-    for (var i = 0, len = arguments.length; i < len; ++i) {
-        var value = arguments[i];
-        if (typeof value === 'number') {
-            return value;
-        }
-        if (typeof value === 'string') {
-            var parsed = parseFloat(value);
-            if (isFinite(parsed)) {
-                return parsed;
-            }
-        }
-    }
-    return undefined;
-}
-var SECOND_IN_MILLISECONDS = 1000;
-var MINUTE_IN_MILLISECONDS = SECOND_IN_MILLISECONDS * 60;
-var HOUR_IN_MILLISECONDS = MINUTE_IN_MILLISECONDS * 60;
-var HALF_DAY_IN_MILLISECONDS = HOUR_IN_MILLISECONDS * 12;
-var DAY_IN_MILLISECONDS = HOUR_IN_MILLISECONDS * 24;
-function normalizeMillisecondsInOneDay(milliseconds) {
-    var value = Math.floor(milliseconds) % DAY_IN_MILLISECONDS;
-    return value >= 0 ? value : value + DAY_IN_MILLISECONDS;
-}
-function am(milliseconds) {
-    return milliseconds >= HALF_DAY_IN_MILLISECONDS ? milliseconds - HALF_DAY_IN_MILLISECONDS : milliseconds;
-}
-function pm(milliseconds) {
-    return milliseconds < HALF_DAY_IN_MILLISECONDS ? milliseconds + HALF_DAY_IN_MILLISECONDS : milliseconds;
-}
-function ampm(milliseconds, a) {
-    milliseconds = normalizeMillisecondsInOneDay(milliseconds);
-    switch (String(a).toLowerCase()) {
-        case 'am': return am(milliseconds);
-        case 'pm': return pm(milliseconds);
-        default: return milliseconds;
-    }
-}
-
-var parse = function (s) {
-    s = s && String(s)
-        .replace(/\s/g, '')
-        .replace(/[\uff00-\uffef]/g, function (token) { return String.fromCharCode(token.charCodeAt(0) - 0xfee0); });
-    if (!s) {
-        return 0;
-    }
-    var match = 
-    // simple integer: complete colons
-    //  1           -> 01:00:00.000
-    //  12          -> 12:00:00.000
-    //  123         -> 01:23:00.000
-    //  1234        -> 12:34:00.000
-    //  12345       -> 01:23:45.000
-    //  123456      -> 12:34:56.000
-    //  1234567     -> 12:34:56.700
-    //  12345678    -> 12:34:56.780
-    //  123456789   -> 12:34:56.789
-    //  1pm         -> 13:00:00.000
-    //  123456am    -> 00:34:56.000
-    s.match(/^([0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(am|pm)?$/i) ||
-        // simple decimal: assume as hour
-        s.match(/^([0-9]*\.[0-9]*)()()()(am|pm)?$/i) ||
-        // colons included: split parts
-        //  1:          -> 01:00:00.000
-        //  12:         -> 12:00:00.000
-        //  123:        -> 03:00:00.000
-        //  1.5:        -> 01:30:00.000
-        //  -1:         -> 23:00:00.000
-        //  12:34:56pm  -> 12:34:56.000
-        //  11:23:45pm  -> 23:23:45.000
-        //  12:34:56    -> 12:34:56.000
-        //  12:34:      -> 12:34:00.000
-        //  12:34       -> 12:34:00.000
-        //  1234:       -> 12:34:00.000
-        //  12::        -> 12:00:00.000
-        //  12:         -> 12:00:00.000
-        s.match(/^([+-]?[0-9]*\.?[0-9]*):([+-]?[0-9]*\.?[0-9]*)(?::([+-]?[0-9]*\.?[0-9]*))?()(am|pm)?$/i);
-    return match
-        ? ampm((match[1] ? parseFloat(match[1]) * HOUR_IN_MILLISECONDS : 0)
-            + (match[2] ? parseFloat(match[2]) * MINUTE_IN_MILLISECONDS : 0)
-            + (match[3] ? parseFloat(match[3]) * SECOND_IN_MILLISECONDS : 0)
-            + (match[4] ? parseFloat('0.' + match[4]) * 1000 : 0), match[5])
-        : NaN;
-};
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var lenientime_parse_1 = require("./lenientime-parse");
+var utils_1 = require("./utils");
 var Lenientime = /** @class */ (function () {
     function Lenientime(_totalMilliseconds) {
         this._totalMilliseconds = _totalMilliseconds;
@@ -140,10 +31,10 @@ var Lenientime = /** @class */ (function () {
             return time._totalMilliseconds;
         }
         if (typeof time === 'number') {
-            return normalizeMillisecondsInOneDay(time);
+            return utils_1.normalizeMillisecondsInOneDay(time);
         }
         if (typeof time === 'string') {
-            return parse(time);
+            return lenientime_parse_1.default(time);
         }
         if (time instanceof Array) {
             time = {
@@ -154,16 +45,16 @@ var Lenientime = /** @class */ (function () {
             };
         }
         if (time && typeof time === 'object') {
-            var totalMilliseconds = normalizeMillisecondsInOneDay(firstNumberOf(time.h, time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS
-                + firstNumberOf(time.m, time.minute, time.minutes, 0) * MINUTE_IN_MILLISECONDS
-                + firstNumberOf(time.s, time.second, time.seconds, 0) * SECOND_IN_MILLISECONDS
-                + firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0));
+            var totalMilliseconds = utils_1.normalizeMillisecondsInOneDay(utils_1.firstNumberOf(time.h, time.hour, time.hours, 0) * utils_1.HOUR_IN_MILLISECONDS
+                + utils_1.firstNumberOf(time.m, time.minute, time.minutes, 0) * utils_1.MINUTE_IN_MILLISECONDS
+                + utils_1.firstNumberOf(time.s, time.second, time.seconds, 0) * utils_1.SECOND_IN_MILLISECONDS
+                + utils_1.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0));
             var a = time.a && String(time.a).toLowerCase();
             if ((time.am === true || time.pm === false || a === 'am')) {
-                return am(totalMilliseconds);
+                return utils_1.am(totalMilliseconds);
             }
             if ((time.pm === true || time.am === false || a === 'pm')) {
-                return pm(totalMilliseconds);
+                return utils_1.pm(totalMilliseconds);
             }
             return totalMilliseconds;
         }
@@ -181,7 +72,7 @@ var Lenientime = /** @class */ (function () {
         return result;
     };
     Object.defineProperty(Lenientime.prototype, "hour", {
-        get: function () { return Math.floor(this._totalMilliseconds / HOUR_IN_MILLISECONDS); },
+        get: function () { return Math.floor(this._totalMilliseconds / utils_1.HOUR_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
@@ -191,17 +82,17 @@ var Lenientime = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "minute", {
-        get: function () { return Math.floor(this._totalMilliseconds % HOUR_IN_MILLISECONDS / MINUTE_IN_MILLISECONDS); },
+        get: function () { return Math.floor(this._totalMilliseconds % utils_1.HOUR_IN_MILLISECONDS / utils_1.MINUTE_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "second", {
-        get: function () { return Math.floor(this._totalMilliseconds % MINUTE_IN_MILLISECONDS / SECOND_IN_MILLISECONDS); },
+        get: function () { return Math.floor(this._totalMilliseconds % utils_1.MINUTE_IN_MILLISECONDS / utils_1.SECOND_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "millisecond", {
-        get: function () { return this._totalMilliseconds % SECOND_IN_MILLISECONDS; },
+        get: function () { return this._totalMilliseconds % utils_1.SECOND_IN_MILLISECONDS; },
         enumerable: true,
         configurable: true
     });
@@ -271,12 +162,12 @@ var Lenientime = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "SS", {
-        get: function () { return this.invalid ? '--' : padEnd(Math.floor(this.millisecond / 10), 2, '0'); },
+        get: function () { return this.invalid ? '--' : utils_1.padEnd(Math.floor(this.millisecond / 10), 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "SSS", {
-        get: function () { return this.invalid ? '---' : padEnd(this.millisecond, 3, '0'); },
+        get: function () { return this.invalid ? '---' : utils_1.padEnd(this.millisecond, 3, '0'); },
         enumerable: true,
         configurable: true
     });
@@ -301,52 +192,52 @@ var Lenientime = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "HH", {
-        get: function () { return this.invalid ? '--' : padStart(this.H, 2, '0'); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.H, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_H", {
-        get: function () { return this.invalid ? '--' : padStart(this.H, 2, ' '); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.H, 2, ' '); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "hh", {
-        get: function () { return this.invalid ? '--' : padStart(this.h, 2, '0'); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.h, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_h", {
-        get: function () { return this.invalid ? '--' : padStart(this.h, 2, ' '); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.h, 2, ' '); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "kk", {
-        get: function () { return this.invalid ? '--' : padStart(this.k, 2, '0'); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.k, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_k", {
-        get: function () { return this.invalid ? '--' : padStart(this.k, 2, ' '); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.k, 2, ' '); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "mm", {
-        get: function () { return this.invalid ? '--' : padStart(this.m, 2, '0'); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.m, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_m", {
-        get: function () { return this.invalid ? '--' : padStart(this.m, 2, ' '); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.m, 2, ' '); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "ss", {
-        get: function () { return this.invalid ? '--' : padStart(this.s, 2, '0'); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.s, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_s", {
-        get: function () { return this.invalid ? '--' : padStart(this.s, 2, ' '); },
+        get: function () { return this.invalid ? '--' : utils_1.padStart(this.s, 2, ' '); },
         enumerable: true,
         configurable: true
     });
@@ -371,17 +262,17 @@ var Lenientime = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "totalSeconds", {
-        get: function () { return Math.floor(this._totalMilliseconds / SECOND_IN_MILLISECONDS); },
+        get: function () { return Math.floor(this._totalMilliseconds / utils_1.SECOND_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "totalMinutes", {
-        get: function () { return Math.floor(this._totalMilliseconds / MINUTE_IN_MILLISECONDS); },
+        get: function () { return Math.floor(this._totalMilliseconds / utils_1.MINUTE_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "valid", {
-        get: function () { return 0 <= this._totalMilliseconds && this._totalMilliseconds < DAY_IN_MILLISECONDS; },
+        get: function () { return 0 <= this._totalMilliseconds && this._totalMilliseconds < utils_1.DAY_IN_MILLISECONDS; },
         enumerable: true,
         configurable: true
     });
@@ -391,17 +282,17 @@ var Lenientime = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "startOfHour", {
-        get: function () { return Lenientime.of(this._totalMilliseconds - this._totalMilliseconds % HOUR_IN_MILLISECONDS); },
+        get: function () { return Lenientime.of(this._totalMilliseconds - this._totalMilliseconds % utils_1.HOUR_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "startOfMinute", {
-        get: function () { return Lenientime.of(this._totalMilliseconds - this._totalMilliseconds % MINUTE_IN_MILLISECONDS); },
+        get: function () { return Lenientime.of(this._totalMilliseconds - this._totalMilliseconds % utils_1.MINUTE_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "startOfSecond", {
-        get: function () { return Lenientime.of(this._totalMilliseconds - this._totalMilliseconds % SECOND_IN_MILLISECONDS); },
+        get: function () { return Lenientime.of(this._totalMilliseconds - this._totalMilliseconds % utils_1.SECOND_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
@@ -422,10 +313,10 @@ var Lenientime = /** @class */ (function () {
     };
     Lenientime.prototype.with = function (time) {
         return Lenientime.of({
-            h: firstNumberOf(time.h, time.hour, time.hours, this.hour),
-            m: firstNumberOf(time.m, time.minute, time.minutes, this.minute),
-            s: firstNumberOf(time.s, time.second, time.seconds, this.second),
-            ms: firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, this.millisecond),
+            h: utils_1.firstNumberOf(time.h, time.hour, time.hours, this.hour),
+            m: utils_1.firstNumberOf(time.m, time.minute, time.minutes, this.minute),
+            s: utils_1.firstNumberOf(time.s, time.second, time.seconds, this.second),
+            ms: utils_1.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, this.millisecond),
             am: time.am === true || time.pm === false || (time.a === 'am' ? true : time.a === 'pm' ? false : undefined),
         });
     };
@@ -465,12 +356,4 @@ var Lenientime = /** @class */ (function () {
     Lenientime.ZERO = new Lenientime(0);
     return Lenientime;
 }());
-
-function lenientime(source) {
-    return Lenientime.of(source);
-}
-lenientime.prototype = Lenientime.prototype;
-
-return lenientime;
-
-})));
+exports.Lenientime = Lenientime;

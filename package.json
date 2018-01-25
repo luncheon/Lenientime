@@ -10,14 +10,14 @@
   "unpkg": "./umd/lenientime.min.js",
   "scripts": {
     "rebuild": "npm run clean && npm run build",
-    "build": "npm run lint && npm run build:umd && npm run build:cjs && npm run build:es && npm run build:doc && npm test",
+    "build": "npm run lint && npm run build:umd && npm run build:cjs && npm run build:es && npm run build:docs && npm test",
     "build:umd": "rollup -c && uglifyjs -m -o umd/lenientime.min.js umd/lenientime.js",
     "build:cjs": "tsc -p .",
     "build:es": "tsc -p . -m es2015 --outDir ./es -d --declarationDir ./types",
-    "build:doc": "typedoc --mode file --name Lenientime --theme minimal --excludeExternals --excludePrivate --out docs/api/ --exclude **/*.test.ts src",
+    "build:docs": "typedoc src/index.ts src/lenientime.ts",
     "watch": "echo \"Rollup watch crashes in cmd/PowerShell on windows. see https://github.com/rollup/rollup/issues/1739\" && exit 1",
     "watch_": "rollup -c -w",
-    "clean": "rimraf umd cjs es types",
+    "clean": "rimraf umd cjs es types docs/api",
     "lint": "tslint -p .",
     "test": "jest"
   },
@@ -39,8 +39,7 @@
   "jest": {
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "src/**/*.ts",
-      "!src/**/*.test.ts"
+      "src/**/*.ts"
     ],
     "moduleFileExtensions": [
       "js",
@@ -48,7 +47,7 @@
     ],
     "testEnvironment": "node",
     "testMatch": [
-      "<rootDir>/src/**/*.test.ts"
+      "<rootDir>/test/**/*.test.ts"
     ],
     "transform": {
       "\\.ts$": "<rootDir>/node_modules/ts-jest/preprocessor.js"

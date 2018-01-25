@@ -1,4 +1,5 @@
-import Lenientime from './'
+import lenientime from '../src'
+import { padEnd } from '../src/utils'
 
 describe('parse', () => {
   [
@@ -51,20 +52,20 @@ describe('parse', () => {
     ['２：３４　ｐＭ'    , '14:34:00.000'],
     ['not a time string' , '--:--:--.---'],
   ].forEach(([input, formatted]) => {
-    test(`${Lenientime.padEnd(input, 20)} => ${formatted}`, () => {
-      expect(Lenientime.parse(input).format('HH:mm:ss.SSS')).toBe(formatted)
-      expect(Lenientime.parse(input).HHmmssSSS).toBe(formatted)
-      expect(Lenientime.of(input).HHmmssSSS).toBe(formatted)
-      expect(Lenientime.of(input).isBefore(formatted)).toBe(false)
-      expect(Lenientime.of(input).isAfter(formatted)).toBe(false)
+    test(`${padEnd(input, 20)} => ${formatted}`, () => {
+      expect(lenientime() instanceof lenientime).toBe(true)
+      expect(lenientime(input).format('HH:mm:ss.SSS')).toBe(formatted)
+      expect(lenientime(input).HHmmssSSS).toBe(formatted)
+      expect(lenientime(input).isBefore(formatted)).toBe(false)
+      expect(lenientime(input).isAfter(formatted)).toBe(false)
       if (formatted === '--:--:--.---') {
-        expect(Lenientime.of(input).equals(formatted)).toBe(false)
-        expect(Lenientime.of(input).isBeforeOrEqual(formatted)).toBe(false)
-        expect(Lenientime.of(input).isAfterOrEqual(formatted)).toBe(false)
+        expect(lenientime(input).equals(formatted)).toBe(false)
+        expect(lenientime(input).isBeforeOrEqual(formatted)).toBe(false)
+        expect(lenientime(input).isAfterOrEqual(formatted)).toBe(false)
       } else {
-        expect(Lenientime.of(input).equals(formatted)).toBe(true)
-        expect(Lenientime.of(input).isBeforeOrEqual(formatted)).toBe(true)
-        expect(Lenientime.of(input).isAfterOrEqual(formatted)).toBe(true)
+        expect(lenientime(input).equals(formatted)).toBe(true)
+        expect(lenientime(input).isBeforeOrEqual(formatted)).toBe(true)
+        expect(lenientime(input).isAfterOrEqual(formatted)).toBe(true)
       }
     })
   })

@@ -20,5 +20,13 @@
   "exclude": [
     "node_modules",
     "**/*.test.ts"
-  ]
+  ],
+  "typedocOptions": {
+    "name": "Lenientime",
+    "out": "docs/api/",
+    "mode": "file",
+    "theme": "minimal",
+    "excludeExternals": true,
+    "excludePrivate": true
+  }
 }

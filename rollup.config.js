@@ -1,9 +1,10 @@
 export default {
-  name: 'Lenientime',
+  name: 'lenientime',
   input: './src/index.ts',
   output: {
     file: './umd/lenientime.js',
     format: 'umd',
+    exports: 'default',
   },
   plugins: [
     typescript(),

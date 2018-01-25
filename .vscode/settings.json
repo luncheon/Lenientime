@@ -5,6 +5,7 @@
     "cjs": true,
     "es": true,
     "umd": true,
-    "types": true
+    "types": true,
+    "docs": true
   }
 }

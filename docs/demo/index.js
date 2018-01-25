@@ -60,7 +60,7 @@
     createElement('thead', undefined, [
       createElement('tr', undefined, [
         createElement('th', undefined, ''),
-        createElement('th', undefined, 'Lenientime.parse(input).format(columnHeader)'),
+        createElement('th', undefined, 'lenientime(input).format(columnHeader)'),
       ]),
       createElement('tr', undefined, [
         createElement('th', undefined, 'input'),
@@ -72,7 +72,7 @@
               for (var i = 0, len = rows.length; i < len; i++) {
                 var row = rows[i];
                 var timeString = row.querySelector('.input').value;
-                row.querySelector('.formatted:nth-child(' + (index + 1) + ')').value = Lenientime.parse(timeString).format(format);
+                row.querySelector('.formatted:nth-child(' + (index + 1) + ')').value = lenientime(timeString).format(format);
               }
             },
           });
@@ -90,7 +90,7 @@
               input: function () {
                 var timeString = this.value;
                 this.closest('tr').querySelectorAll('.formatted').forEach(function (formatted, index) {
-                  formatted.value = Lenientime.parse(timeString).format(formats[index]);
+                  formatted.value = lenientime(timeString).format(formats[index]);
                 });
               },
             }
@@ -99,7 +99,7 @@
         createElement('td', undefined, formats.map(function (format) {
           return createElement(
             'input',
-            { 'class': 'formatted', value: Lenientime.parse(timeString).format(format), tabIndex: -1 },
+            { 'class': 'formatted', value: lenientime(timeString).format(format), tabIndex: -1 },
             undefined,
             { keypress: function (event) { event.preventDefault(); } }  // for readonly; "readonly" attribute hides the caret I need.
           );
