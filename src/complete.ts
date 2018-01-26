@@ -6,6 +6,6 @@ window.addEventListener('change', event => {
   const dataset = input.dataset
   if (value && 'lenientimeComplete' in dataset) {
     const time = lenientime(value)
-    input.value = time.valid ? time.format(dataset.lenientimeComplete || dataset.lenientimeFormat || 'HH:mm') : ''
+    input.value = time.valid ? time.format(dataset.lenientimeComplete || 'HH:mm') : ''
   }
 }, true)

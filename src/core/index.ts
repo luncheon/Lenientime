@@ -35,7 +35,8 @@ export class Lenientime implements LenientimeLike {
     } else if (source instanceof Lenientime) {
       return source
     } else {
-      return new Lenientime(Lenientime._totalMillisecondsOf(source))
+      const milliseconds = Lenientime._totalMillisecondsOf(source)
+      return milliseconds === 0 ? Lenientime.ZERO : new Lenientime(milliseconds)
     }
   }
 
@@ -106,43 +107,75 @@ export class Lenientime implements LenientimeLike {
   private constructor(private _totalMilliseconds: number) {
   }
 
+  /** Numeric hour in 24-hour clock: [0..23] */
   get hour():         number { return Math.floor(this._totalMilliseconds / HOUR_IN_MILLISECONDS) }
+  /** Numeric hour in 1-based 12-hour clock: [1..12] */
   get hour12():       number { return (this.hour + 11) % 12 + 1 }
+  /** Numeric minute: [0..59] */
   get minute():       number { return Math.floor(this._totalMilliseconds % HOUR_IN_MILLISECONDS / MINUTE_IN_MILLISECONDS) }
+  /** Numeric second: [0..59] */
   get second():       number { return Math.floor(this._totalMilliseconds % MINUTE_IN_MILLISECONDS / SECOND_IN_MILLISECONDS) }
+  /** Numeric millisecond: [0..999] */
   get millisecond():  number { return this._totalMilliseconds % SECOND_IN_MILLISECONDS }
   get am():          boolean { return this.hour < 12 }
   get pm():          boolean { return this.hour >= 12 }
 
+  /** Alias for [[hour]] */
   get hours()        { return this.hour }
+  /** Alias for [[hour12]] */
   get hours12()      { return this.hour12 }
+  /** Alias for [[minute]] */
   get minutes()      { return this.minute }
+  /** Alias for [[second]] */
   get seconds()      { return this.second }
+  /** Alias for [[millisecond]] */
   get milliseconds() { return this.millisecond }
 
+  /** Hour string in 24-hour notation without padding: ["0".."23"] | "-" */
   get H()   { return this.invalid ? '-'   : String(this.hour) }
+  /** Hour string in 1-based-12-hour notation without padding: ["1".."12"] | "-" */
   get h()   { return this.invalid ? '-'   : String(this.hour12) }
+  /** Hour string in 0-based-12-hour notation without padding: ["0".."11"] | "-" */
   get k()   { return this.invalid ? '-'   : String((this.hour + 23) % 24 + 1) }
+  /** Minute string without padding: ["0".."59"] | "-" */
   get m()   { return this.invalid ? '-'   : String(this.minute) }
+  /** Second string without padding: ["0".."59"] | "-" */
   get s()   { return this.invalid ? '-'   : String(this.second) }
+  /** 1 fractional digit string of second: ["0".."9"] | "-" */
   get S()   { return this.invalid ? '-'   : String(Math.floor(this.millisecond / 100)) }
+  /** 2 fractional digits string of second: ["00".."99"] | "--" */
   get SS()  { return this.invalid ? '--'  : padEnd(Math.floor(this.millisecond / 10), 2, '0') }
+  /** 3 fractional digits string of second: ["000".."999"] | "---" */
   get SSS() { return this.invalid ? '---' : padEnd(this.millisecond, 3, '0') }
 
+  /** "am" | "pm" | "--" */
   get a()   { return this.invalid ? '--'   : this.am ? 'am' : 'pm' }
+  /** "AM" | "PM" | "--" */
   get A()   { return this.invalid ? '--'   : this.am ? 'AM' : 'PM' }
+  /** "a.m." | "p.m." | "----" */
   get aa()  { return this.invalid ? '----' : this.am ? 'a.m.' : 'p.m.' }
+  /** "A.M." | "P.M." | "----" */
   get AA()  { return this.invalid ? '----' : this.am ? 'A.M.' : 'P.M.' }
 
+  /** Hour string in 24-hour notation with zero padding: ["00".."23"] | "--" */
   get HH()  { return this.invalid ? '--'   : padStart(this.H, 2, '0') }
+  /** Hour string in 24-hour notation with space padding: [" 0".."23"] | "--" */
   get _H()  { return this.invalid ? '--'   : padStart(this.H, 2, ' ') }
+  /** Hour string in 1-based 12-hour notation with zero padding: ["01".."12"] | "--" */
   get hh()  { return this.invalid ? '--'   : padStart(this.h, 2, '0') }
+  /** hour string in 1-based 12-hour notation with space padding: [" 1".."12"] | "--" */
   get _h()  { return this.invalid ? '--'   : padStart(this.h, 2, ' ') }
+  /** Hour string in 0-based 12-hour notation with zero padding: ["00".."11"] | "--" */
   get kk()  { return this.invalid ? '--'   : padStart(this.k, 2, '0') }
+  /** Hour string in 0-based 12-hour notation with space padding: [" 0".."11"] | "--" */
   get _k()  { return this.invalid ? '--'   : padStart(this.k, 2, ' ') }
+  /** Minute string with zero padding: ["00".."59"] | "--" */
   get mm()  { return this.invalid ? '--'   : padStart(this.m, 2, '0') }
+  /** Minute string with space padding: [" 0".."59"] | "--" */
   get _m()  { return this.invalid ? '--'   : padStart(this.m, 2, ' ') }
+  /** Second string with zero padding: ["00".."59"] | "--" */
   get ss()  { return this.invalid ? '--'   : padStart(this.s, 2, '0') }
+  /** Second string with space padding: [" 0".."59"] | "--" */
   get _s()  { return this.invalid ? '--'   : padStart(this.s, 2, ' ') }
 
   get HHmm()              { return this.HH     + ':' + this.mm }
@@ -159,6 +192,10 @@ export class Lenientime implements LenientimeLike {
   get startOfHour()       { return Lenientime.of(this._totalMilliseconds - this._totalMilliseconds % HOUR_IN_MILLISECONDS) }
   get startOfMinute()     { return Lenientime.of(this._totalMilliseconds - this._totalMilliseconds % MINUTE_IN_MILLISECONDS) }
   get startOfSecond()     { return Lenientime.of(this._totalMilliseconds - this._totalMilliseconds % SECOND_IN_MILLISECONDS) }
+
+  public ifInvalid(source: LenientimeParsable) {
+    return this.valid ? this : Lenientime.of(source)
+  }
 
   public startOf(unit: 'hour' | 'minute' | 'second') {
     switch (unit) {

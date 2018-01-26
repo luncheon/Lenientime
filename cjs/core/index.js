@@ -14,7 +14,8 @@ var Lenientime = /** @class */ (function () {
             return source;
         }
         else {
-            return new Lenientime(Lenientime._totalMillisecondsOf(source));
+            var milliseconds = Lenientime._totalMillisecondsOf(source);
+            return milliseconds === 0 ? Lenientime.ZERO : new Lenientime(milliseconds);
         }
     };
     Lenientime.now = function () {
@@ -71,26 +72,31 @@ var Lenientime = /** @class */ (function () {
         return result;
     };
     Object.defineProperty(Lenientime.prototype, "hour", {
+        /** Numeric hour in 24-hour clock: [0..23] */
         get: function () { return Math.floor(this._totalMilliseconds / utils_1.HOUR_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "hour12", {
+        /** Numeric hour in 1-based 12-hour clock: [1..12] */
         get: function () { return (this.hour + 11) % 12 + 1; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "minute", {
+        /** Numeric minute: [0..59] */
         get: function () { return Math.floor(this._totalMilliseconds % utils_1.HOUR_IN_MILLISECONDS / utils_1.MINUTE_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "second", {
+        /** Numeric second: [0..59] */
         get: function () { return Math.floor(this._totalMilliseconds % utils_1.MINUTE_IN_MILLISECONDS / utils_1.SECOND_IN_MILLISECONDS); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "millisecond", {
+        /** Numeric millisecond: [0..999] */
         get: function () { return this._totalMilliseconds % utils_1.SECOND_IN_MILLISECONDS; },
         enumerable: true,
         configurable: true
@@ -106,136 +112,163 @@ var Lenientime = /** @class */ (function () {
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "hours", {
+        /** Alias for [[hour]] */
         get: function () { return this.hour; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "hours12", {
+        /** Alias for [[hour12]] */
         get: function () { return this.hour12; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "minutes", {
+        /** Alias for [[minute]] */
         get: function () { return this.minute; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "seconds", {
+        /** Alias for [[second]] */
         get: function () { return this.second; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "milliseconds", {
+        /** Alias for [[millisecond]] */
         get: function () { return this.millisecond; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "H", {
+        /** Hour string in 24-hour notation without padding: ["0".."23"] | "-" */
         get: function () { return this.invalid ? '-' : String(this.hour); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "h", {
+        /** Hour string in 1-based-12-hour notation without padding: ["1".."12"] | "-" */
         get: function () { return this.invalid ? '-' : String(this.hour12); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "k", {
+        /** Hour string in 0-based-12-hour notation without padding: ["0".."11"] | "-" */
         get: function () { return this.invalid ? '-' : String((this.hour + 23) % 24 + 1); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "m", {
+        /** Minute string without padding: ["0".."59"] | "-" */
         get: function () { return this.invalid ? '-' : String(this.minute); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "s", {
+        /** Second string without padding: ["0".."59"] | "-" */
         get: function () { return this.invalid ? '-' : String(this.second); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "S", {
+        /** 1 fractional digit string of second: ["0".."9"] | "-" */
         get: function () { return this.invalid ? '-' : String(Math.floor(this.millisecond / 100)); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "SS", {
+        /** 2 fractional digits string of second: ["00".."99"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padEnd(Math.floor(this.millisecond / 10), 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "SSS", {
+        /** 3 fractional digits string of second: ["000".."999"] | "---" */
         get: function () { return this.invalid ? '---' : utils_1.padEnd(this.millisecond, 3, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "a", {
+        /** "am" | "pm" | "--" */
         get: function () { return this.invalid ? '--' : this.am ? 'am' : 'pm'; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "A", {
+        /** "AM" | "PM" | "--" */
         get: function () { return this.invalid ? '--' : this.am ? 'AM' : 'PM'; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "aa", {
+        /** "a.m." | "p.m." | "----" */
         get: function () { return this.invalid ? '----' : this.am ? 'a.m.' : 'p.m.'; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "AA", {
+        /** "A.M." | "P.M." | "----" */
         get: function () { return this.invalid ? '----' : this.am ? 'A.M.' : 'P.M.'; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "HH", {
+        /** Hour string in 24-hour notation with zero padding: ["00".."23"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.H, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_H", {
+        /** Hour string in 24-hour notation with space padding: [" 0".."23"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.H, 2, ' '); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "hh", {
+        /** Hour string in 1-based 12-hour notation with zero padding: ["01".."12"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.h, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_h", {
+        /** hour string in 1-based 12-hour notation with space padding: [" 1".."12"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.h, 2, ' '); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "kk", {
+        /** Hour string in 0-based 12-hour notation with zero padding: ["00".."11"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.k, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_k", {
+        /** Hour string in 0-based 12-hour notation with space padding: [" 0".."11"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.k, 2, ' '); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "mm", {
+        /** Minute string with zero padding: ["00".."59"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.m, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_m", {
+        /** Minute string with space padding: [" 0".."59"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.m, 2, ' '); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "ss", {
+        /** Second string with zero padding: ["00".."59"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.s, 2, '0'); },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Lenientime.prototype, "_s", {
+        /** Second string with space padding: [" 0".."59"] | "--" */
         get: function () { return this.invalid ? '--' : utils_1.padStart(this.s, 2, ' '); },
         enumerable: true,
         configurable: true
@@ -295,6 +328,9 @@ var Lenientime = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Lenientime.prototype.ifInvalid = function (source) {
+        return this.valid ? this : Lenientime.of(source);
+    };
     Lenientime.prototype.startOf = function (unit) {
         switch (unit) {
             case 'hour': return this.startOfHour;
