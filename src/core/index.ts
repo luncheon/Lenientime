@@ -1,7 +1,7 @@
-import parse from './lenientime-parse'
+import parse from './parse'
 import {
   DAY_IN_MILLISECONDS, HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS,
-  am, firstNumberOf, normalizeMillisecondsInOneDay, padEnd, padStart, pm,
+  am, ampm, firstNumberOf, normalizeMillisecondsInOneDay, padEnd, padStart, pm,
 } from './utils'
 
 export default interface LenientimeLike {
@@ -72,20 +72,18 @@ export class Lenientime implements LenientimeLike {
       }
     }
     if (time && typeof time === 'object') {
-      const totalMilliseconds = normalizeMillisecondsInOneDay(
+      const totalMilliseconds =
           firstNumberOf(time.h, time.  hour, time.  hours, 0)! *   HOUR_IN_MILLISECONDS
         + firstNumberOf(time.m, time.minute, time.minutes, 0)! * MINUTE_IN_MILLISECONDS
         + firstNumberOf(time.s, time.second, time.seconds, 0)! * SECOND_IN_MILLISECONDS
         + firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0)!
-      )
-      const a = time.a && String(time.a).toLowerCase()
-      if ((time.am === true || time.pm === false || a === 'am')) {
+      if ((time.am === true || time.pm === false)) {
         return am(totalMilliseconds)
       }
-      if ((time.pm === true || time.am === false || a === 'pm')) {
+      if ((time.pm === true || time.am === false)) {
         return pm(totalMilliseconds)
       }
-      return totalMilliseconds
+      return ampm(totalMilliseconds, time.a)
     }
     return NaN
   }

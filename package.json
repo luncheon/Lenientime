@@ -11,13 +11,15 @@
   "scripts": {
     "rebuild": "npm run clean && npm run build",
     "build": "npm run lint && npm run build:umd && npm run build:cjs && npm run build:es && npm run build:docs && npm test",
-    "build:umd": "rollup -c && uglifyjs -m -o umd/lenientime.min.js umd/lenientime.js",
+    "build:umd": "npm run build:umd:index && npm run build:umd:complete && cpx umd/**/* docs/umd/",
+    "build:umd:index": "rollup -c && uglifyjs -m -o umd/lenientime.min.js umd/lenientime.js",
+    "build:umd:complete": "rollup -c -i src/complete.ts -o umd/lenientime-complete.js && uglifyjs -m -o umd/lenientime-complete.min.js umd/lenientime-complete.js",
     "build:cjs": "tsc -p .",
     "build:es": "tsc -p . -m es2015 --outDir ./es -d --declarationDir ./types",
-    "build:docs": "typedoc src/index.ts src/lenientime.ts",
+    "build:docs": "typedoc src/index.ts src/core/index.ts",
     "watch": "echo \"Rollup watch crashes in cmd/PowerShell on windows. see https://github.com/rollup/rollup/issues/1739\" && exit 1",
     "watch_": "rollup -c -w",
-    "clean": "rimraf umd cjs es types docs/api",
+    "clean": "rimraf umd cjs es types docs/api docs/umd",
     "lint": "tslint -p .",
     "test": "jest"
   },
@@ -26,6 +28,7 @@
   "license": "WTFPL",
   "devDependencies": {
     "@types/jest": "^21.1.8",
+    "cpx": "^1.5.0",
     "jest": "^21.2.1",
     "rimraf": "^2.6.2",
     "rollup": "^0.52.0",

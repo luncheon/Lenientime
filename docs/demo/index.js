@@ -56,7 +56,7 @@
     'k:m:s.SS AA'
   ];
 
-  document.body.appendChild(createElement('table', undefined, [
+  document.querySelector('.example').appendChild(createElement('table', undefined, [
     createElement('thead', undefined, [
       createElement('tr', undefined, [
         createElement('th', undefined, ''),

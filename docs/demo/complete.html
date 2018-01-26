@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Lenientime - Parse time leniently and then format strictly</title>
+    <title>Lenientime Complate - Declarative time autocompletion</title>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-64398169-1"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -17,24 +17,36 @@
     <link rel="stylesheet" href="./index.css">
   </head>
   <body>
-    <h1 data-animated-text="Lenientime">Lenientime</h1>
+    <script src="../umd/lenientime-complete.min.js"></script>
+    <h1 data-animated-text="Lenientime Complete">Lenientime Complete</h1>
     <a class="github-link" href="https://github.com/luncheon/lenientime">
       <img src="https://cdn.jsdelivr.net/npm/octicons@7.0.1/build/svg/mark-github.svg" alt="GitHub">
     </a>
-    <p>Parse time leniently and then format strictly.</p>
+    <p>Declarative time autocompletion.</p>
 
     <aside>
       <h5>see</h5>
       <ul style="margin-top: 0;">
-        <li><a href="complete.html" style="font-size: 85%;">Declarative time autocompletion</a></li>
-        <li><a href="../api/index.html#lenientime" style="font-size: 85%;">API reference</a></li>
+        <li><a href="index.html" style="font-size: 85%;">examples of input / format</a></li>
       </ul>
     </aside>
 
-    <section class="example">
+    <section>
       <h5>example</h5>
+      <dl style="margin: 0 0 0 20px;">
+        <dt>
+          <code>&lt;input data-lenientime-complete&gt;</code>
+        </dt>
+        <dd style="margin: 0 .5em .5em .5em;">
+          <input data-lenientime-complete>
+        </dd>
+        <dt>
+          <code>&lt;input data-lenientime-complete="hh:mm:ss a"&gt;</code>
+        </dt>
+        <dd style="margin: 0 .5em .5em .5em;">
+          <input data-lenientime-complete="hh:mm:ss a">
+        </dd>
+      </dl>
     </section>
-    <script src="../umd/lenientime.min.js"></script>
-    <script src="./index.js"></script>
   </body>
 </html>

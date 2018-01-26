@@ -9,4 +9,4 @@ export declare const DAY_IN_MILLISECONDS: number;
 export declare function normalizeMillisecondsInOneDay(milliseconds: number): number;
 export declare function am(milliseconds: number): number;
 export declare function pm(milliseconds: number): number;
-export declare function ampm(milliseconds: number, a: string): number;
+export declare function ampm(milliseconds: number, a?: string): number;

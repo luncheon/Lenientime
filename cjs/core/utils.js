@@ -60,9 +60,9 @@ function pm(milliseconds) {
 exports.pm = pm;
 function ampm(milliseconds, a) {
     milliseconds = normalizeMillisecondsInOneDay(milliseconds);
-    switch (String(a).toLowerCase()) {
-        case 'am': return am(milliseconds);
-        case 'pm': return pm(milliseconds);
+    switch (a && String(a)[0].toLowerCase()) {
+        case 'a': return am(milliseconds);
+        case 'p': return pm(milliseconds);
         default: return milliseconds;
     }
 }

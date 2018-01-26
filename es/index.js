@@ -1,4 +1,4 @@
-import { Lenientime } from './lenientime';
+import { Lenientime } from './core';
 export default function lenientime(source) {
     return Lenientime.of(source);
 }

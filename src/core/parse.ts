@@ -2,9 +2,10 @@ import { HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS, a
 
 export default function (s: string) {
   s = s && String(s)
-    .replace(/\s/g, '')
     // fullwidth -> halfwidth
     .replace(/[\uff00-\uffef]/g, token => String.fromCharCode(token.charCodeAt(0) - 0xfee0))
+    .replace(/\s/g, '')
+    .replace(/(a|p)\.?m?\.?$/i, ($0, $1) => $1.toLowerCase())
   if (!s) {
     return 0
   }
@@ -21,10 +22,10 @@ export default function (s: string) {
     //  123456789   -> 12:34:56.789
     //  1pm         -> 13:00:00.000
     //  123456am    -> 00:34:56.000
-    s.match(/^([0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(am|pm)?$/i) ||
+    s.match(/^([0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(a|p)?$/i) ||
 
     // simple decimal: assume as hour
-    s.match(/^([0-9]*\.[0-9]*)()()()(am|pm)?$/i) ||
+    s.match(/^([0-9]*\.[0-9]*)()()()(a|p)?$/i) ||
 
     // colons included: split parts
     //  1:          -> 01:00:00.000
@@ -40,7 +41,7 @@ export default function (s: string) {
     //  1234:       -> 12:34:00.000
     //  12::        -> 12:00:00.000
     //  12:         -> 12:00:00.000
-    s.match(/^([+-]?[0-9]*\.?[0-9]*):([+-]?[0-9]*\.?[0-9]*)(?::([+-]?[0-9]*\.?[0-9]*))?()(am|pm)?$/i)
+    s.match(/^([+-]?[0-9]*\.?[0-9]*):([+-]?[0-9]*\.?[0-9]*)(?::([+-]?[0-9]*\.?[0-9]*))?()(a|p)?$/i)
   return match
     ? ampm(
           (match[1] ? parseFloat(match[1]) * HOUR_IN_MILLISECONDS : 0)

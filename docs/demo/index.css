@@ -47,9 +47,10 @@ h1 {
   position: relative;
   display: inline-block;
   margin: 0;
+  white-space: nowrap;
 }
 h1::before {
-  content: 'Lenientime';
+  content: attr(data-animated-text);
   font-family: Grundschrift-Normal;
   position: absolute;
   left: 0;
@@ -67,6 +68,17 @@ h1::after {
   z-index: -1;
   background-color: white;
   animation: whiteout 10s linear infinite;
+}
+h5 {
+  font-size: 100%;
+  font-weight: normal;
+  margin: 1em 0 .25em 0;
+}
+h5::before {
+  content: '@';
+}
+code {
+  font-family: rounded-x-mgenplus-1mn-regular, monospace;
 }
 input {
   font-family: rounded-x-mgenplus-1mn-regular, monospace;
@@ -92,9 +104,9 @@ table {
 td, th {
   padding: 1px .25em;
 }
-td > input:not(:first-child),
-th > input:not(:first-child) {
-  margin-left: .25em;
+td > input,
+th > input {
+  margin-right: .25em;
 }
 tr > td:first-child,
 tr > th:first-child {

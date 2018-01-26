@@ -1,8 +1,11 @@
-import { HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS, ampm } from './utils';
-export default function (s) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = require("./utils");
+function default_1(s) {
     s = s && String(s)
+        .replace(/[\uff00-\uffef]/g, function (token) { return String.fromCharCode(token.charCodeAt(0) - 0xfee0); })
         .replace(/\s/g, '')
-        .replace(/[\uff00-\uffef]/g, function (token) { return String.fromCharCode(token.charCodeAt(0) - 0xfee0); });
+        .replace(/(a|p)\.?m?\.?$/i, function ($0, $1) { return $1.toLowerCase(); });
     if (!s) {
         return 0;
     }
@@ -19,9 +22,9 @@ export default function (s) {
     //  123456789   -> 12:34:56.789
     //  1pm         -> 13:00:00.000
     //  123456am    -> 00:34:56.000
-    s.match(/^([0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(am|pm)?$/i) ||
+    s.match(/^([0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(a|p)?$/i) ||
         // simple decimal: assume as hour
-        s.match(/^([0-9]*\.[0-9]*)()()()(am|pm)?$/i) ||
+        s.match(/^([0-9]*\.[0-9]*)()()()(a|p)?$/i) ||
         // colons included: split parts
         //  1:          -> 01:00:00.000
         //  12:         -> 12:00:00.000
@@ -36,11 +39,12 @@ export default function (s) {
         //  1234:       -> 12:34:00.000
         //  12::        -> 12:00:00.000
         //  12:         -> 12:00:00.000
-        s.match(/^([+-]?[0-9]*\.?[0-9]*):([+-]?[0-9]*\.?[0-9]*)(?::([+-]?[0-9]*\.?[0-9]*))?()(am|pm)?$/i);
+        s.match(/^([+-]?[0-9]*\.?[0-9]*):([+-]?[0-9]*\.?[0-9]*)(?::([+-]?[0-9]*\.?[0-9]*))?()(a|p)?$/i);
     return match
-        ? ampm((match[1] ? parseFloat(match[1]) * HOUR_IN_MILLISECONDS : 0)
-            + (match[2] ? parseFloat(match[2]) * MINUTE_IN_MILLISECONDS : 0)
-            + (match[3] ? parseFloat(match[3]) * SECOND_IN_MILLISECONDS : 0)
+        ? utils_1.ampm((match[1] ? parseFloat(match[1]) * utils_1.HOUR_IN_MILLISECONDS : 0)
+            + (match[2] ? parseFloat(match[2]) * utils_1.MINUTE_IN_MILLISECONDS : 0)
+            + (match[3] ? parseFloat(match[3]) * utils_1.SECOND_IN_MILLISECONDS : 0)
             + (match[4] ? parseFloat('0.' + match[4]) * 1000 : 0), match[5])
         : NaN;
 }
+exports.default = default_1;

@@ -59,11 +59,11 @@ export function pm(milliseconds: number) {
   return milliseconds < HALF_DAY_IN_MILLISECONDS ? milliseconds + HALF_DAY_IN_MILLISECONDS : milliseconds
 }
 
-export function ampm(milliseconds: number, a: string) {
+export function ampm(milliseconds: number, a?: string) {
   milliseconds = normalizeMillisecondsInOneDay(milliseconds)
-  switch (String(a).toLowerCase()) {
-    case 'am':  return am(milliseconds)
-    case 'pm':  return pm(milliseconds)
-    default:    return milliseconds
+  switch (a && String(a)[0].toLowerCase()) {
+    case 'a': return am(milliseconds)
+    case 'p': return pm(milliseconds)
+    default:  return milliseconds
   }
 }

@@ -1,0 +1,12 @@
+export declare function padStart(source: any, maxLength: number, pad?: string): any;
+export declare function padEnd(source: any, maxLength: number, pad?: string): any;
+export declare function firstNumberOf(...args: (any | undefined)[]): number | undefined;
+export declare const SECOND_IN_MILLISECONDS = 1000;
+export declare const MINUTE_IN_MILLISECONDS: number;
+export declare const HOUR_IN_MILLISECONDS: number;
+export declare const HALF_DAY_IN_MILLISECONDS: number;
+export declare const DAY_IN_MILLISECONDS: number;
+export declare function normalizeMillisecondsInOneDay(milliseconds: number): number;
+export declare function am(milliseconds: number): number;
+export declare function pm(milliseconds: number): number;
+export declare function ampm(milliseconds: number, a?: string): number;

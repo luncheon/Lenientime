@@ -1,5 +1,5 @@
 import lenientime from '../src'
-import { padEnd } from '../src/utils'
+import { padEnd } from '../src/core/utils'
 
 describe('parse', () => {
   [
@@ -7,6 +7,7 @@ describe('parse', () => {
     ['1'                 , '01:00:00.000'],
     ['1am'               , '01:00:00.000'],
     ['1pm'               , '13:00:00.000'],
+    ['1p.m.'             , '13:00:00.000'],
     ['13am'              , '01:00:00.000'],
     ['13pm'              , '13:00:00.000'],
     ['12'                , '12:00:00.000'],

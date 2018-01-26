@@ -1,7 +1,7 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory() :
 	typeof define === 'function' && define.amd ? define(factory) :
-	(global.lenientime = factory());
+	(factory());
 }(this, (function () { 'use strict';
 
 function padStart(source, maxLength, pad) {
@@ -471,6 +471,14 @@ function lenientime(source) {
 }
 lenientime.prototype = Lenientime.prototype;
 
-return lenientime;
+window.addEventListener('change', function (event) {
+    var input = event.target;
+    var value = input.value;
+    var dataset = input.dataset;
+    if (value && 'lenientimeComplete' in dataset) {
+        var time = lenientime(value);
+        input.value = time.valid ? time.format(dataset.lenientimeComplete || dataset.lenientimeFormat || 'HH:mm') : '';
+    }
+}, true);
 
 })));

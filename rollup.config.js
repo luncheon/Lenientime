@@ -4,7 +4,6 @@ export default {
   output: {
     file: './umd/lenientime.js',
     format: 'umd',
-    exports: 'default',
   },
   plugins: [
     typescript(),

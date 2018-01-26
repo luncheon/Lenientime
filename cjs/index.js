@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var lenientime_1 = require("./lenientime");
+var core_1 = require("./core");
 function lenientime(source) {
-    return lenientime_1.Lenientime.of(source);
+    return core_1.Lenientime.of(source);
 }
 exports.default = lenientime;
-lenientime.prototype = lenientime_1.Lenientime.prototype;
+lenientime.prototype = core_1.Lenientime.prototype;

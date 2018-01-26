@@ -1,5 +1,5 @@
-import parse from './lenientime-parse';
-import { DAY_IN_MILLISECONDS, HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS, am, firstNumberOf, normalizeMillisecondsInOneDay, padEnd, padStart, pm, } from './utils';
+import parse from './parse';
+import { DAY_IN_MILLISECONDS, HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS, am, ampm, firstNumberOf, normalizeMillisecondsInOneDay, padEnd, padStart, pm, } from './utils';
 var Lenientime = /** @class */ (function () {
     function Lenientime(_totalMilliseconds) {
         this._totalMilliseconds = _totalMilliseconds;
@@ -43,18 +43,17 @@ var Lenientime = /** @class */ (function () {
             };
         }
         if (time && typeof time === 'object') {
-            var totalMilliseconds = normalizeMillisecondsInOneDay(firstNumberOf(time.h, time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS
+            var totalMilliseconds = firstNumberOf(time.h, time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS
                 + firstNumberOf(time.m, time.minute, time.minutes, 0) * MINUTE_IN_MILLISECONDS
                 + firstNumberOf(time.s, time.second, time.seconds, 0) * SECOND_IN_MILLISECONDS
-                + firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0));
-            var a = time.a && String(time.a).toLowerCase();
-            if ((time.am === true || time.pm === false || a === 'am')) {
+                + firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0);
+            if ((time.am === true || time.pm === false)) {
                 return am(totalMilliseconds);
             }
-            if ((time.pm === true || time.am === false || a === 'pm')) {
+            if ((time.pm === true || time.am === false)) {
                 return pm(totalMilliseconds);
             }
-            return totalMilliseconds;
+            return ampm(totalMilliseconds, time.a);
         }
         return NaN;
     };

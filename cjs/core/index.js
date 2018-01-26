@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var lenientime_parse_1 = require("./lenientime-parse");
+var parse_1 = require("./parse");
 var utils_1 = require("./utils");
 var Lenientime = /** @class */ (function () {
     function Lenientime(_totalMilliseconds) {
@@ -34,7 +34,7 @@ var Lenientime = /** @class */ (function () {
             return utils_1.normalizeMillisecondsInOneDay(time);
         }
         if (typeof time === 'string') {
-            return lenientime_parse_1.default(time);
+            return parse_1.default(time);
         }
         if (time instanceof Array) {
             time = {
@@ -45,18 +45,17 @@ var Lenientime = /** @class */ (function () {
             };
         }
         if (time && typeof time === 'object') {
-            var totalMilliseconds = utils_1.normalizeMillisecondsInOneDay(utils_1.firstNumberOf(time.h, time.hour, time.hours, 0) * utils_1.HOUR_IN_MILLISECONDS
+            var totalMilliseconds = utils_1.firstNumberOf(time.h, time.hour, time.hours, 0) * utils_1.HOUR_IN_MILLISECONDS
                 + utils_1.firstNumberOf(time.m, time.minute, time.minutes, 0) * utils_1.MINUTE_IN_MILLISECONDS
                 + utils_1.firstNumberOf(time.s, time.second, time.seconds, 0) * utils_1.SECOND_IN_MILLISECONDS
-                + utils_1.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0));
-            var a = time.a && String(time.a).toLowerCase();
-            if ((time.am === true || time.pm === false || a === 'am')) {
+                + utils_1.firstNumberOf(time.ms, time.S, time.millisecond, time.milliseconds, 0);
+            if ((time.am === true || time.pm === false)) {
                 return utils_1.am(totalMilliseconds);
             }
-            if ((time.pm === true || time.am === false || a === 'pm')) {
+            if ((time.pm === true || time.am === false)) {
                 return utils_1.pm(totalMilliseconds);
             }
-            return totalMilliseconds;
+            return utils_1.ampm(totalMilliseconds, time.a);
         }
         return NaN;
     };
