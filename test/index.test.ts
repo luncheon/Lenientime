@@ -1,10 +1,11 @@
-import lenientime from '../src'
+import lenientime from '../src/core'
 import { padEnd } from '../src/core/utils'
 
 describe('parse', () => {
   [
     [''                  , '00:00:00.000'],
     ['1'                 , '01:00:00.000'],
+    ['-1'                , '23:00:00.000'],
     ['1am'               , '01:00:00.000'],
     ['1pm'               , '13:00:00.000'],
     ['1p.m.'             , '13:00:00.000'],
@@ -54,7 +55,7 @@ describe('parse', () => {
     ['not a time string' , '--:--:--.---'],
   ].forEach(([input, formatted]) => {
     test(`${padEnd(input, 20)} => ${formatted}`, () => {
-      expect(lenientime() instanceof lenientime).toBe(true)
+      expect(lenientime(input) instanceof lenientime).toBe(true)
       expect(lenientime(input).format('HH:mm:ss.SSS')).toBe(formatted)
       expect(lenientime(input).HHmmssSSS).toBe(formatted)
       expect(lenientime(input).isBefore(formatted)).toBe(false)

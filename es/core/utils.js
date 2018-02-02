@@ -1,16 +1,16 @@
-export function padStart(source, maxLength, pad) {
+export function padStart(source, minLength, pad) {
     source = String(source);
-    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+    if (!minLength || !isFinite(minLength) || source.length >= minLength) {
         return source;
     }
-    return _pad(maxLength - source.length, pad) + source;
+    return _pad(minLength - source.length, pad) + source;
 }
-export function padEnd(source, maxLength, pad) {
+export function padEnd(source, minLength, pad) {
     source = String(source);
-    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+    if (!minLength || !isFinite(minLength) || source.length >= minLength) {
         return source;
     }
-    return source + _pad(maxLength - source.length, pad);
+    return source + _pad(minLength - source.length, pad);
 }
 function _pad(padLength, pad) {
     pad = pad === undefined || pad === null || pad === '' ? ' ' : String(pad);
@@ -20,7 +20,7 @@ function _pad(padLength, pad) {
     }
     return paddings.substr(0, padLength);
 }
-export function firstNumberOf() {
+export function firstFiniteNumberOf() {
     for (var i = 0, len = arguments.length; i < len; ++i) {
         var value = arguments[i];
         if (typeof value === 'number') {
@@ -56,5 +56,15 @@ export function ampm(milliseconds, a) {
         case 'a': return am(milliseconds);
         case 'p': return pm(milliseconds);
         default: return milliseconds;
+    }
+}
+export function limit(value, min, max, cyclic) {
+    if (cyclic) {
+        ++max;
+        value = (value - min) % (max - min);
+        return value < 0 ? value + max : value + min;
+    }
+    else {
+        return value < min ? min : value > max ? max : value;
     }
 }

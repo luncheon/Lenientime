@@ -69,18 +69,10 @@ h1::after {
   background-color: white;
   animation: whiteout 10s linear infinite;
 }
-h5 {
-  font-size: 100%;
-  font-weight: normal;
-  margin: 1em 0 .25em 0;
-}
-h5::before {
-  content: '@';
-}
 code {
   font-family: rounded-x-mgenplus-1mn-regular, monospace;
 }
-input {
+input[type=text], input[data-lenientime] {
   font-family: rounded-x-mgenplus-1mn-regular, monospace;
   padding: 0 .4em;
   font-size: 1em;
@@ -90,6 +82,9 @@ input {
   width: 12em;
   background-color: transparent;
   font-size: 93.75%;
+}
+input[data-lenientime] {
+  width: 30em;
 }
 input:focus {
   border-color: #6cf;
@@ -134,4 +129,28 @@ th {
 .github-link > img {
   width: 2em;
   height: 2em;
+}
+
+section {
+  padding-left: 20px;
+}
+section > h5 {
+  font-family: Grundschrift-Normal;
+  font-size: 1.5em;
+  margin: 1.5em 0 .75em -20px;
+}
+section > h6 {
+  font-size: 1em;
+  font-weight: normal;
+  margin: .5em 0 .25em -20px;
+}
+ul {
+  margin-top: 0;
+}
+.code {
+  display: inline-block;
+  padding: .5em 1em;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  font-size: 93.75%;
 }

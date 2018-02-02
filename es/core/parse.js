@@ -1,5 +1,35 @@
-import { HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS, ampm } from './utils';
-export default function (s) {
+import Lenientime from './lenientime';
+import { HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS, am, ampm, firstFiniteNumberOf, normalizeMillisecondsInOneDay, pm, } from './utils';
+export default function parseIntoMilliseconds(time) {
+    switch (typeof time) {
+        case 'number':
+            return normalizeMillisecondsInOneDay(time);
+        case 'string':
+            return parseString(time);
+        case 'object':
+            if (time) {
+                return parseLenientimeLike(time instanceof Array ? { h: time[0], m: time[1], s: time[2], S: time[3] } : time);
+            }
+    }
+    return NaN;
+}
+function parseLenientimeLike(time) {
+    if (time instanceof Lenientime) {
+        return time.totalMilliseconds;
+    }
+    var totalMilliseconds = firstFiniteNumberOf(time.h, time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS
+        + firstFiniteNumberOf(time.m, time.minute, time.minutes, 0) * MINUTE_IN_MILLISECONDS
+        + firstFiniteNumberOf(time.s, time.second, time.seconds, 0) * SECOND_IN_MILLISECONDS
+        + firstFiniteNumberOf(time.S, time.millisecond, time.milliseconds, 0);
+    if ((time.am === true || time.pm === false)) {
+        return am(totalMilliseconds);
+    }
+    if ((time.pm === true || time.am === false)) {
+        return pm(totalMilliseconds);
+    }
+    return ampm(totalMilliseconds, time.a);
+}
+function parseString(s) {
     s = s && String(s)
         .replace(/[\uff00-\uffef]/g, function (token) { return String.fromCharCode(token.charCodeAt(0) - 0xfee0); })
         .replace(/\s/g, '')
@@ -20,9 +50,9 @@ export default function (s) {
     //  123456789   -> 12:34:56.789
     //  1pm         -> 13:00:00.000
     //  123456am    -> 00:34:56.000
-    s.match(/^([0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(a|p)?$/i) ||
+    s.match(/^([+-]?[0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(a|p)?$/i) ||
         // simple decimal: assume as hour
-        s.match(/^([0-9]*\.[0-9]*)()()()(a|p)?$/i) ||
+        s.match(/^([+-]?[0-9]*\.[0-9]*)()()()(a|p)?$/i) ||
         // colons included: split parts
         //  1:          -> 01:00:00.000
         //  12:         -> 12:00:00.000

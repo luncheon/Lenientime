@@ -1,7 +1,38 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var lenientime_1 = require("./lenientime");
 var utils_1 = require("./utils");
-function default_1(s) {
+function parseIntoMilliseconds(time) {
+    switch (typeof time) {
+        case 'number':
+            return utils_1.normalizeMillisecondsInOneDay(time);
+        case 'string':
+            return parseString(time);
+        case 'object':
+            if (time) {
+                return parseLenientimeLike(time instanceof Array ? { h: time[0], m: time[1], s: time[2], S: time[3] } : time);
+            }
+    }
+    return NaN;
+}
+exports.default = parseIntoMilliseconds;
+function parseLenientimeLike(time) {
+    if (time instanceof lenientime_1.default) {
+        return time.totalMilliseconds;
+    }
+    var totalMilliseconds = utils_1.firstFiniteNumberOf(time.h, time.hour, time.hours, 0) * utils_1.HOUR_IN_MILLISECONDS
+        + utils_1.firstFiniteNumberOf(time.m, time.minute, time.minutes, 0) * utils_1.MINUTE_IN_MILLISECONDS
+        + utils_1.firstFiniteNumberOf(time.s, time.second, time.seconds, 0) * utils_1.SECOND_IN_MILLISECONDS
+        + utils_1.firstFiniteNumberOf(time.S, time.millisecond, time.milliseconds, 0);
+    if ((time.am === true || time.pm === false)) {
+        return utils_1.am(totalMilliseconds);
+    }
+    if ((time.pm === true || time.am === false)) {
+        return utils_1.pm(totalMilliseconds);
+    }
+    return utils_1.ampm(totalMilliseconds, time.a);
+}
+function parseString(s) {
     s = s && String(s)
         .replace(/[\uff00-\uffef]/g, function (token) { return String.fromCharCode(token.charCodeAt(0) - 0xfee0); })
         .replace(/\s/g, '')
@@ -22,9 +53,9 @@ function default_1(s) {
     //  123456789   -> 12:34:56.789
     //  1pm         -> 13:00:00.000
     //  123456am    -> 00:34:56.000
-    s.match(/^([0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(a|p)?$/i) ||
+    s.match(/^([+-]?[0-9]{1,2})(?:([0-9]{2})(?:([0-9]{2})([0-9]*))?)?(a|p)?$/i) ||
         // simple decimal: assume as hour
-        s.match(/^([0-9]*\.[0-9]*)()()()(a|p)?$/i) ||
+        s.match(/^([+-]?[0-9]*\.[0-9]*)()()()(a|p)?$/i) ||
         // colons included: split parts
         //  1:          -> 01:00:00.000
         //  12:         -> 12:00:00.000
@@ -47,4 +78,3 @@ function default_1(s) {
             + (match[4] ? parseFloat('0.' + match[4]) * 1000 : 0), match[5])
         : NaN;
 }
-exports.default = default_1;

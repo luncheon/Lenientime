@@ -1,17 +1,17 @@
-export function padStart(source: any, maxLength: number, pad?: string) {
+export function padStart(source: any, minLength: number, pad?: string) {
   source = String(source)
-  if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+  if (!minLength || !isFinite(minLength) || source.length >= minLength) {
     return source
   }
-  return _pad(maxLength - source.length, pad) + source
+  return _pad(minLength - source.length, pad) + source
 }
 
-export function padEnd(source: any, maxLength: number, pad?: string) {
+export function padEnd(source: any, minLength: number, pad?: string) {
   source = String(source)
-  if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+  if (!minLength || !isFinite(minLength) || source.length >= minLength) {
     return source
   }
-  return source + _pad(maxLength - source.length, pad)
+  return source + _pad(minLength - source.length, pad)
 }
 
 function _pad(padLength: number, pad?: string) {
@@ -23,8 +23,8 @@ function _pad(padLength: number, pad?: string) {
   return paddings.substr(0, padLength)
 }
 
-export function firstNumberOf(...args: (any | undefined)[]): number | undefined
-export function firstNumberOf() {
+export function firstFiniteNumberOf(...args: (any | undefined)[]): number | undefined
+export function firstFiniteNumberOf() {
   for (let i = 0, len = arguments.length; i < len; ++i) {
     const value = arguments[i]
     if (typeof value === 'number') {
@@ -65,5 +65,15 @@ export function ampm(milliseconds: number, a?: string) {
     case 'a': return am(milliseconds)
     case 'p': return pm(milliseconds)
     default:  return milliseconds
+  }
+}
+
+export function limit(value: number, min: number, max: number, cyclic?: boolean) {
+  if (cyclic) {
+    ++max
+    value = (value - min) % (max - min)
+    return value < 0 ? value + max : value + min
+  } else {
+    return value < min ? min : value > max ? max : value
   }
 }

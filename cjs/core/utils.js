@@ -1,19 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function padStart(source, maxLength, pad) {
+function padStart(source, minLength, pad) {
     source = String(source);
-    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+    if (!minLength || !isFinite(minLength) || source.length >= minLength) {
         return source;
     }
-    return _pad(maxLength - source.length, pad) + source;
+    return _pad(minLength - source.length, pad) + source;
 }
 exports.padStart = padStart;
-function padEnd(source, maxLength, pad) {
+function padEnd(source, minLength, pad) {
     source = String(source);
-    if (!maxLength || !isFinite(maxLength) || source.length >= maxLength) {
+    if (!minLength || !isFinite(minLength) || source.length >= minLength) {
         return source;
     }
-    return source + _pad(maxLength - source.length, pad);
+    return source + _pad(minLength - source.length, pad);
 }
 exports.padEnd = padEnd;
 function _pad(padLength, pad) {
@@ -24,7 +24,7 @@ function _pad(padLength, pad) {
     }
     return paddings.substr(0, padLength);
 }
-function firstNumberOf() {
+function firstFiniteNumberOf() {
     for (var i = 0, len = arguments.length; i < len; ++i) {
         var value = arguments[i];
         if (typeof value === 'number') {
@@ -39,7 +39,7 @@ function firstNumberOf() {
     }
     return undefined;
 }
-exports.firstNumberOf = firstNumberOf;
+exports.firstFiniteNumberOf = firstFiniteNumberOf;
 exports.SECOND_IN_MILLISECONDS = 1000;
 exports.MINUTE_IN_MILLISECONDS = exports.SECOND_IN_MILLISECONDS * 60;
 exports.HOUR_IN_MILLISECONDS = exports.MINUTE_IN_MILLISECONDS * 60;
@@ -67,3 +67,14 @@ function ampm(milliseconds, a) {
     }
 }
 exports.ampm = ampm;
+function limit(value, min, max, cyclic) {
+    if (cyclic) {
+        ++max;
+        value = (value - min) % (max - min);
+        return value < 0 ? value + max : value + min;
+    }
+    else {
+        return value < min ? min : value > max ? max : value;
+    }
+}
+exports.limit = limit;

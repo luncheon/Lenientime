@@ -1,7 +1,7 @@
 (function () {
   var timeStrings = [
-    '',
     '1',
+    '-1',
     '1am',
     '1pm',
     '13am',
@@ -56,11 +56,11 @@
     'k:m:s.SS AA'
   ];
 
-  document.querySelector('.example').appendChild(createElement('table', undefined, [
+  document.querySelector('.format-examples').appendChild(createElement('table', undefined, [
     createElement('thead', undefined, [
       createElement('tr', undefined, [
         createElement('th', undefined, ''),
-        createElement('th', undefined, 'lenientime(input).format(columnHeader)'),
+        createElement('th', undefined, 'format'),
       ]),
       createElement('tr', undefined, [
         createElement('th', undefined, 'input'),
@@ -107,8 +107,7 @@
       ]);
     })),
   ]))
-    .querySelector('input').focus();
-  
+
   function createElement(tagName, attributes, children, eventListeners) {
     var element = document.createElement(tagName);
     attributes && Object.keys(attributes).forEach(function (name) { element.setAttribute(name, attributes[name]) });

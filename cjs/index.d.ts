@@ -1,2 +1,4 @@
-import { Lenientime, LenientimeParsable } from './core';
-export default function lenientime(source?: LenientimeParsable): Lenientime;
+import lenientime from './core';
+export default lenientime;
+import './input-helpers/adjust-on-arrow-keys';
+import './input-helpers/complete';

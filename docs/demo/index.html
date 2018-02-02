@@ -21,19 +21,42 @@
     <a class="github-link" href="https://github.com/luncheon/lenientime">
       <img src="https://cdn.jsdelivr.net/npm/octicons@7.0.1/build/svg/mark-github.svg" alt="GitHub">
     </a>
-    <p>Parse time leniently and then format strictly.</p>
+    <p>A time input helper.</p>
 
-    <aside>
-      <h5>see</h5>
-      <ul style="margin-top: 0;">
-        <li><a href="complete.html" style="font-size: 85%;">Declarative time autocompletion</a></li>
-        <li><a href="../api/index.html#lenientime" style="font-size: 85%;">API reference</a></li>
-      </ul>
-    </aside>
-
-    <section class="example">
-      <h5>example</h5>
+    <section>
+      <h5>Usage and Example</h5>
+      <section>
+        <h6>Markup</h6>
+        <code class="code">
+          &lt;script src="https://luncheon.github.io/lenientime/umd/lenientime.min.js"&gt;&lt;/script&gt;<br>
+          &lt;input data-lenientime placeholder="Press up/down key or input numbers and blur."&gt;<br>
+          &lt;input data-lenientime="HH:mm:ss.SSS" value="00:00:00.000"&gt;<br>
+          &lt;input data-lenientime="h:_m:_s a"&gt;
+        </code>
+      </section>
+      <section>
+        <h6>Result</h6>
+        <div style="display: flex; flex-direction: column;">
+          <input data-lenientime placeholder="Press up/down key or input numbers and blur.">
+          <input data-lenientime="HH:mm:ss.SSS" value="00:00:00.000">
+          <input data-lenientime="h:_m:_s a">
+        </div>
+      </section>
     </section>
+
+    <section>
+      <h5>Features</h5>
+      <div><input type="checkbox" checked disabled> Complete on focus out; parse leniently and format strictly.</div>
+      <div><input type="checkbox" checked disabled> Increment/decrement on up/down key pressed.</div>
+      <div><input type="checkbox"         disabled> Increment/decrement on mouse wheel.</div>
+      <div><input type="checkbox"         disabled> Move selection range on tab/shift+tab key pressed.</div>
+      <div><input type="checkbox"         disabled> <del>Popup the coolest time picker</del> (Out of scope)</div>
+    </section>
+
+    <section class="format-examples">
+      <h5>Format Examples</h5>
+    </section>
+
     <script src="../umd/lenientime.min.js"></script>
     <script src="./index.js"></script>
   </body>

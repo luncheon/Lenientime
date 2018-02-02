@@ -1,7 +1,7 @@
 {
   "name": "lenientime",
   "version": "0.0.0",
-  "description": "Parse time leniently and then format strictly",
+  "description": "A time input helper",
   "main": "./cjs/index.js",
   "types": "./types/index.d.ts",
   "module": "./es/index.js",
@@ -11,12 +11,10 @@
   "scripts": {
     "rebuild": "npm run clean && npm run build",
     "build": "npm run lint && npm run build:umd && npm run build:cjs && npm run build:es && npm run build:docs && npm test",
-    "build:umd": "npm run build:umd:index && npm run build:umd:complete && cpx umd/**/* docs/umd/",
-    "build:umd:index": "rollup -c && uglifyjs -m -o umd/lenientime.min.js umd/lenientime.js",
-    "build:umd:complete": "rollup -c -i src/complete.ts -o umd/lenientime-complete.js && uglifyjs -m -o umd/lenientime-complete.min.js umd/lenientime-complete.js",
+    "build:umd": "rollup -c && uglifyjs -m -o umd/lenientime.min.js umd/lenientime.js && cpx umd/**/* docs/umd/",
     "build:cjs": "tsc -p .",
     "build:es": "tsc -p . -m es2015 --outDir ./es -d --declarationDir ./types",
-    "build:docs": "typedoc src/index.ts src/core/index.ts",
+    "build:docs": "typedoc src/index.ts src/core/index.ts src/core/lenientime.ts src/core/lenientime-like.ts",
     "watch": "echo \"Rollup watch crashes in cmd/PowerShell on windows. see https://github.com/rollup/rollup/issues/1739\" && exit 1",
     "watch_": "rollup -c -w",
     "clean": "rimraf umd cjs es types docs/api docs/umd",
