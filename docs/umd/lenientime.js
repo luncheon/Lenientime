@@ -46,6 +46,9 @@ var MINUTE_IN_MILLISECONDS = SECOND_IN_MILLISECONDS * 60;
 var HOUR_IN_MILLISECONDS = MINUTE_IN_MILLISECONDS * 60;
 var HALF_DAY_IN_MILLISECONDS = HOUR_IN_MILLISECONDS * 12;
 var DAY_IN_MILLISECONDS = HOUR_IN_MILLISECONDS * 24;
+function now() {
+    return (Date.now() - new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS) % DAY_IN_MILLISECONDS;
+}
 function normalizeMillisecondsInOneDay(milliseconds) {
     var value = Math.floor(milliseconds) % DAY_IN_MILLISECONDS;
     return value >= 0 ? value : value + DAY_IN_MILLISECONDS;
@@ -111,6 +114,9 @@ function parseString(s) {
         .replace(/(a|p)\.?m?\.?$/i, function ($0, $1) { return $1.toLowerCase(); });
     if (!s) {
         return 0;
+    }
+    if (s.toLowerCase() === 'now') {
+        return now();
     }
     var match = 
     // simple integer: complete colons
@@ -584,7 +590,7 @@ var lenientime$1 = (function (source) {
 lenientime$1.prototype = Lenientime.prototype;
 lenientime$1.INVALID = INVALID;
 lenientime$1.ZERO = ZERO;
-lenientime$1.now = function () { return new Lenientime(Date.now()); };
+lenientime$1.now = function () { return new Lenientime(now()); };
 lenientime$1.min = function () { return reduce(arguments, function (min, current) { return min.invalid || current.isBefore(min) ? current : min; }); };
 lenientime$1.max = function () { return reduce(arguments, function (max, current) { return max.invalid || current.isAfter(max) ? current : max; }); };
 function reduce(source, callback, initialValue) {

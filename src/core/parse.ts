@@ -2,7 +2,7 @@ import Lenientime from './lenientime'
 import LenientimeLike from './lenientime-like'
 import {
   HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS,
-  am, ampm, firstFiniteNumberOf, normalizeMillisecondsInOneDay, pm,
+  am, ampm, firstFiniteNumberOf, normalizeMillisecondsInOneDay, now, pm,
 } from './utils'
 
 export type LenientimeParsable = Partial<LenientimeLike> | number | number[] | string
@@ -49,6 +49,9 @@ function parseString(s: string) {
     .replace(/(a|p)\.?m?\.?$/i, ($0, $1) => $1.toLowerCase())
   if (!s) {
     return 0
+  }
+  if (s.toLowerCase() === 'now') {
+    return now()
   }
   const match =
     // simple integer: complete colons

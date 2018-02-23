@@ -40,6 +40,9 @@ function parseString(s) {
     if (!s) {
         return 0;
     }
+    if (s.toLowerCase() === 'now') {
+        return utils_1.now();
+    }
     var match = 
     // simple integer: complete colons
     //  1           -> 01:00:00.000

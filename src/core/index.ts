@@ -1,5 +1,6 @@
 import Lenientime from './lenientime'
 import parseIntoMilliseconds, { LenientimeParsable } from './parse'
+import { now } from './utils'
 
 const ZERO = new Lenientime(0)
 const INVALID = new Lenientime(NaN)
@@ -28,7 +29,7 @@ const lenientime: lenientime = ((source?: LenientimeParsable) => {
 lenientime.prototype = Lenientime.prototype
 lenientime.INVALID = INVALID
 lenientime.ZERO = ZERO
-lenientime.now = () => new Lenientime(Date.now())
+lenientime.now = () => new Lenientime(now())
 lenientime.min = function () { return reduce(arguments, (min, current) => min.invalid || current.isBefore(min) ? current : min) }
 lenientime.max = function () { return reduce(arguments, (max, current) => max.invalid || current.isAfter(max) ? current : max) }
 

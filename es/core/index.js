@@ -1,5 +1,6 @@
 import Lenientime from './lenientime';
 import parseIntoMilliseconds from './parse';
+import { now } from './utils';
 var ZERO = new Lenientime(0);
 var INVALID = new Lenientime(NaN);
 var lenientime = (function (source) {
@@ -17,7 +18,7 @@ var lenientime = (function (source) {
 lenientime.prototype = Lenientime.prototype;
 lenientime.INVALID = INVALID;
 lenientime.ZERO = ZERO;
-lenientime.now = function () { return new Lenientime(Date.now()); };
+lenientime.now = function () { return new Lenientime(now()); };
 lenientime.min = function () { return reduce(arguments, function (min, current) { return min.invalid || current.isBefore(min) ? current : min; }); };
 lenientime.max = function () { return reduce(arguments, function (max, current) { return max.invalid || current.isAfter(max) ? current : max; }); };
 function reduce(source, callback, initialValue) {

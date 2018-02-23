@@ -2,6 +2,7 @@
   var timeStrings = [
     '1',
     '-1',
+    'now',
     '1am',
     '1pm',
     '13am',

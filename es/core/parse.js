@@ -1,5 +1,5 @@
 import Lenientime from './lenientime';
-import { HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS, am, ampm, firstFiniteNumberOf, normalizeMillisecondsInOneDay, pm, } from './utils';
+import { HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS, am, ampm, firstFiniteNumberOf, normalizeMillisecondsInOneDay, now, pm, } from './utils';
 export default function parseIntoMilliseconds(time) {
     switch (typeof time) {
         case 'number':
@@ -36,6 +36,9 @@ function parseString(s) {
         .replace(/(a|p)\.?m?\.?$/i, function ($0, $1) { return $1.toLowerCase(); });
     if (!s) {
         return 0;
+    }
+    if (s.toLowerCase() === 'now') {
+        return now();
     }
     var match = 
     // simple integer: complete colons

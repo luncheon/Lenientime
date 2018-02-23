@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var lenientime_1 = require("./lenientime");
 var parse_1 = require("./parse");
+var utils_1 = require("./utils");
 var ZERO = new lenientime_1.default(0);
 var INVALID = new lenientime_1.default(NaN);
 var lenientime = (function (source) {
@@ -19,7 +20,7 @@ var lenientime = (function (source) {
 lenientime.prototype = lenientime_1.default.prototype;
 lenientime.INVALID = INVALID;
 lenientime.ZERO = ZERO;
-lenientime.now = function () { return new lenientime_1.default(Date.now()); };
+lenientime.now = function () { return new lenientime_1.default(utils_1.now()); };
 lenientime.min = function () { return reduce(arguments, function (min, current) { return min.invalid || current.isBefore(min) ? current : min; }); };
 lenientime.max = function () { return reduce(arguments, function (max, current) { return max.invalid || current.isAfter(max) ? current : max; }); };
 function reduce(source, callback, initialValue) {

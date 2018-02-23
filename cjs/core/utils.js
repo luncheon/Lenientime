@@ -45,6 +45,10 @@ exports.MINUTE_IN_MILLISECONDS = exports.SECOND_IN_MILLISECONDS * 60;
 exports.HOUR_IN_MILLISECONDS = exports.MINUTE_IN_MILLISECONDS * 60;
 exports.HALF_DAY_IN_MILLISECONDS = exports.HOUR_IN_MILLISECONDS * 12;
 exports.DAY_IN_MILLISECONDS = exports.HOUR_IN_MILLISECONDS * 24;
+function now() {
+    return (Date.now() - new Date().getTimezoneOffset() * exports.MINUTE_IN_MILLISECONDS) % exports.DAY_IN_MILLISECONDS;
+}
+exports.now = now;
 function normalizeMillisecondsInOneDay(milliseconds) {
     var value = Math.floor(milliseconds) % exports.DAY_IN_MILLISECONDS;
     return value >= 0 ? value : value + exports.DAY_IN_MILLISECONDS;

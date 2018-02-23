@@ -1,6 +1,8 @@
 import lenientime from '../src/core'
 import { padEnd } from '../src/core/utils'
 
+const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds))
+
 describe('parse', () => {
   [
     [''                  , '00:00:00.000'],
@@ -71,4 +73,20 @@ describe('parse', () => {
       }
     })
   })
+})
+
+test('now', async done => {
+  await sleep(1000 - Date.now() % 1000)
+
+  const dateNow = new Date()
+  const lenientimeNow = lenientime.now()
+  const lenientimeParseNow = lenientime('now')
+
+  expect(lenientimeNow.seconds).toBe(dateNow.getSeconds())
+  expect(lenientimeNow.minutes).toBe(dateNow.getMinutes())
+  expect(lenientimeNow.hours)  .toBe(dateNow.getHours())
+  expect(lenientimeParseNow.seconds).toBe(dateNow.getSeconds())
+  expect(lenientimeParseNow.minutes).toBe(dateNow.getMinutes())
+  expect(lenientimeParseNow.hours)  .toBe(dateNow.getHours())
+  done()
 })

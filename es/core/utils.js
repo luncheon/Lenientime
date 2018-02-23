@@ -40,6 +40,9 @@ export var MINUTE_IN_MILLISECONDS = SECOND_IN_MILLISECONDS * 60;
 export var HOUR_IN_MILLISECONDS = MINUTE_IN_MILLISECONDS * 60;
 export var HALF_DAY_IN_MILLISECONDS = HOUR_IN_MILLISECONDS * 12;
 export var DAY_IN_MILLISECONDS = HOUR_IN_MILLISECONDS * 24;
+export function now() {
+    return (Date.now() - new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS) % DAY_IN_MILLISECONDS;
+}
 export function normalizeMillisecondsInOneDay(milliseconds) {
     var value = Math.floor(milliseconds) % DAY_IN_MILLISECONDS;
     return value >= 0 ? value : value + DAY_IN_MILLISECONDS;

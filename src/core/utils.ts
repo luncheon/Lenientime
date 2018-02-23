@@ -46,6 +46,10 @@ export const      HOUR_IN_MILLISECONDS = MINUTE_IN_MILLISECONDS * 60
 export const  HALF_DAY_IN_MILLISECONDS =   HOUR_IN_MILLISECONDS * 12
 export const       DAY_IN_MILLISECONDS =   HOUR_IN_MILLISECONDS * 24
 
+export function now() {
+  return (Date.now() - new Date().getTimezoneOffset() * MINUTE_IN_MILLISECONDS) % DAY_IN_MILLISECONDS
+}
+
 export function normalizeMillisecondsInOneDay(milliseconds: number) {
   const value = Math.floor(milliseconds) % DAY_IN_MILLISECONDS
   return value >= 0 ? value : value + DAY_IN_MILLISECONDS
