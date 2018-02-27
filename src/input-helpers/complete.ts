@@ -10,6 +10,12 @@ window.addEventListener('change', event => {
   const dataset = input.dataset
   if (value && ('lenientimeComplete' in dataset || 'lenientime' in dataset)) {
     const time = lenientime(value)
-    input.value = time.valid ? time.format(dataset.lenientimeFormat || dataset.lenientime || 'HH:mm') : ''
+    const completed = time.valid ? time.format(dataset.lenientimeFormat || dataset.lenientime || 'HH:mm') : ''
+    if (completed !== value) {
+      input.value = completed
+      const inputEvent = document.createEvent('CustomEvent')
+      inputEvent.initCustomEvent('input', true, false, 'complete')
+      input.dispatchEvent(inputEvent)
+    }
   }
 }, true)

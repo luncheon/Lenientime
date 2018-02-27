@@ -656,7 +656,13 @@ window.addEventListener('change', function (event) {
     var dataset = input.dataset;
     if (value && ('lenientimeComplete' in dataset || 'lenientime' in dataset)) {
         var time = lenientime$1(value);
-        input.value = time.valid ? time.format(dataset.lenientimeFormat || dataset.lenientime || 'HH:mm') : '';
+        var completed = time.valid ? time.format(dataset.lenientimeFormat || dataset.lenientime || 'HH:mm') : '';
+        if (completed !== value) {
+            input.value = completed;
+            var inputEvent = document.createEvent('CustomEvent');
+            inputEvent.initCustomEvent('input', true, false, 'complete');
+            input.dispatchEvent(inputEvent);
+        }
     }
 }, true);
 
