@@ -1,5 +1,6 @@
 import lenientime from '../core'
 import { findToken } from '../core/token'
+import dispatchInputEvent from './dispatch-input-event'
 
 // <input data-lenientime>
 // <input data-lenientime="HH:mm:ss.SSS">
@@ -33,6 +34,7 @@ window.addEventListener('keydown', event => {
         const tokenIndex = token.index
         input.value = value.slice(0, tokenIndex) + adjustedValue + value.slice(tokenIndex + token.value.length)
         input.setSelectionRange(tokenIndex, tokenIndex + adjustedValue.length)
+        dispatchInputEvent(input)
       }
     }
   } else {
@@ -41,5 +43,6 @@ window.addEventListener('keydown', event => {
     if (token) {
       input.setSelectionRange(token.index, token.index + token.value.length)
     }
+    dispatchInputEvent(input)
   }
 }, true)

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("../core");
 var token_1 = require("../core/token");
+var dispatch_input_event_1 = require("./dispatch-input-event");
 // <input data-lenientime>
 // <input data-lenientime="HH:mm:ss.SSS">
 // <input data-lenientime-adjust-on-arrow-keys>
@@ -31,6 +32,7 @@ window.addEventListener('keydown', function (event) {
                 var tokenIndex = token.index;
                 input.value = value.slice(0, tokenIndex) + adjustedValue + value.slice(tokenIndex + token.value.length);
                 input.setSelectionRange(tokenIndex, tokenIndex + adjustedValue.length);
+                dispatch_input_event_1.default(input);
             }
         }
     }
@@ -40,5 +42,6 @@ window.addEventListener('keydown', function (event) {
         if (token) {
             input.setSelectionRange(token.index, token.index + token.value.length);
         }
+        dispatch_input_event_1.default(input);
     }
 }, true);

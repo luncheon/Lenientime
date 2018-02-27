@@ -1,4 +1,5 @@
 import lenientime from '../core';
+import dispatchInputEvent from './dispatch-input-event';
 // <input data-lenientime>
 // <input data-lenientime data-lenientime-format="HH:mm:ss.SSS">
 // <input data-lenientime-complete>
@@ -12,9 +13,7 @@ window.addEventListener('change', function (event) {
         var completed = time.valid ? time.format(dataset.lenientimeFormat || dataset.lenientime || 'HH:mm') : '';
         if (completed !== value) {
             input.value = completed;
-            var inputEvent = document.createEvent('CustomEvent');
-            inputEvent.initCustomEvent('input', true, false, 'complete');
-            input.dispatchEvent(inputEvent);
+            dispatchInputEvent(input);
         }
     }
 }, true);

@@ -605,6 +605,12 @@ function reduce(source, callback, initialValue) {
     return result;
 }
 
+function dispatchInputEvent(inputElement) {
+    var inputEvent = document.createEvent('CustomEvent');
+    inputEvent.initCustomEvent('input', true, false, 'complete');
+    inputElement.dispatchEvent(inputEvent);
+}
+
 // <input data-lenientime>
 // <input data-lenientime="HH:mm:ss.SSS">
 // <input data-lenientime-adjust-on-arrow-keys>
@@ -634,6 +640,7 @@ window.addEventListener('keydown', function (event) {
                 var tokenIndex = token.index;
                 input.value = value.slice(0, tokenIndex) + adjustedValue + value.slice(tokenIndex + token.value.length);
                 input.setSelectionRange(tokenIndex, tokenIndex + adjustedValue.length);
+                dispatchInputEvent(input);
             }
         }
     }
@@ -643,6 +650,7 @@ window.addEventListener('keydown', function (event) {
         if (token) {
             input.setSelectionRange(token.index, token.index + token.value.length);
         }
+        dispatchInputEvent(input);
     }
 }, true);
 
@@ -659,9 +667,7 @@ window.addEventListener('change', function (event) {
         var completed = time.valid ? time.format(dataset.lenientimeFormat || dataset.lenientime || 'HH:mm') : '';
         if (completed !== value) {
             input.value = completed;
-            var inputEvent = document.createEvent('CustomEvent');
-            inputEvent.initCustomEvent('input', true, false, 'complete');
-            input.dispatchEvent(inputEvent);
+            dispatchInputEvent(input);
         }
     }
 }, true);
