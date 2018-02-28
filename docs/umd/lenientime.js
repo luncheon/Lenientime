@@ -575,7 +575,7 @@ var Lenientime = /** @class */ (function () {
 
 var ZERO = new Lenientime(0);
 var INVALID = new Lenientime(NaN);
-var lenientime$1 = (function (source) {
+var lenientime = (function (source) {
     if (source === undefined || source === null) {
         return INVALID;
     }
@@ -587,17 +587,17 @@ var lenientime$1 = (function (source) {
         return milliseconds === 0 ? ZERO : isNaN(milliseconds) ? INVALID : new Lenientime(milliseconds);
     }
 });
-lenientime$1.prototype = Lenientime.prototype;
-lenientime$1.INVALID = INVALID;
-lenientime$1.ZERO = ZERO;
-lenientime$1.now = function () { return new Lenientime(now()); };
-lenientime$1.min = function () { return reduce(arguments, function (min, current) { return min.invalid || current.isBefore(min) ? current : min; }); };
-lenientime$1.max = function () { return reduce(arguments, function (max, current) { return max.invalid || current.isAfter(max) ? current : max; }); };
+lenientime.prototype = Lenientime.prototype;
+lenientime.INVALID = INVALID;
+lenientime.ZERO = ZERO;
+lenientime.now = function () { return new Lenientime(now()); };
+lenientime.min = function () { return reduce(arguments, function (min, current) { return min.invalid || current.isBefore(min) ? current : min; }); };
+lenientime.max = function () { return reduce(arguments, function (max, current) { return max.invalid || current.isAfter(max) ? current : max; }); };
 function reduce(source, callback, initialValue) {
     if (initialValue === void 0) { initialValue = INVALID; }
     var result = initialValue;
     for (var i = 0, len = source.length; i < len; ++i) {
-        var current = lenientime$1(source[i]);
+        var current = lenientime(source[i]);
         if (current.valid) {
             result = callback(result, current, i, source);
         }
@@ -649,7 +649,7 @@ function adjustOnArrowKeys(options) {
             }
         }
         else {
-            input.value = lenientime$1.ZERO.format(template);
+            input.value = lenientime.ZERO.format(template);
             var token = findToken(template, input.value, 0);
             if (token) {
                 input.setSelectionRange(token.index, token.index + token.value.length);
@@ -672,7 +672,7 @@ function complete(options) {
         var value = input.value;
         var dataset = input.dataset;
         if (value && (completeAttributeName in dataset || dataAttributeName in dataset)) {
-            var time = lenientime$1(value);
+            var time = lenientime(value);
             var completed = time.valid ? time.format(dataset[formatAttributeName] || dataset[dataAttributeName] || 'HH:mm') : '';
             if (completed !== value) {
                 input.value = completed;
@@ -685,6 +685,6 @@ function complete(options) {
 adjustOnArrowKeys();
 complete();
 
-return lenientime$1;
+return lenientime;
 
 })));
