@@ -92,8 +92,8 @@ function parseIntoMilliseconds(time) {
     return NaN;
 }
 function parseLenientimeLike(time) {
-    if (time instanceof Lenientime) {
-        return time.totalMilliseconds;
+    if (typeof time.totalMilliseconds === 'number') {
+        return normalizeMillisecondsInOneDay(time.totalMilliseconds);
     }
     var totalMilliseconds = firstFiniteNumberOf(time.h, time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS
         + firstFiniteNumberOf(time.m, time.minute, time.minutes, 0) * MINUTE_IN_MILLISECONDS

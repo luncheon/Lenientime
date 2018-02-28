@@ -1,4 +1,3 @@
-import Lenientime from './lenientime';
 import { HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS, am, ampm, firstFiniteNumberOf, normalizeMillisecondsInOneDay, now, pm, } from './utils';
 export default function parseIntoMilliseconds(time) {
     switch (typeof time) {
@@ -14,8 +13,8 @@ export default function parseIntoMilliseconds(time) {
     return NaN;
 }
 function parseLenientimeLike(time) {
-    if (time instanceof Lenientime) {
-        return time.totalMilliseconds;
+    if (typeof time.totalMilliseconds === 'number') {
+        return normalizeMillisecondsInOneDay(time.totalMilliseconds);
     }
     var totalMilliseconds = firstFiniteNumberOf(time.h, time.hour, time.hours, 0) * HOUR_IN_MILLISECONDS
         + firstFiniteNumberOf(time.m, time.minute, time.minutes, 0) * MINUTE_IN_MILLISECONDS

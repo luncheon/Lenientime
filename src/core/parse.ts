@@ -1,4 +1,3 @@
-import Lenientime from './lenientime'
 import LenientimeLike from './lenientime-like'
 import {
   HOUR_IN_MILLISECONDS, MINUTE_IN_MILLISECONDS, SECOND_IN_MILLISECONDS,
@@ -23,9 +22,9 @@ export default function parseIntoMilliseconds(time: LenientimeParsable) {
   return NaN
 }
 
-function parseLenientimeLike(time: Partial<LenientimeLike>) {
-  if (time instanceof Lenientime) {
-    return time.totalMilliseconds
+function parseLenientimeLike(time: Partial<LenientimeLike> & { totalMilliseconds?: number }) {
+  if (typeof time.totalMilliseconds === 'number') {
+    return normalizeMillisecondsInOneDay(time.totalMilliseconds)
   }
   const totalMilliseconds =
     firstFiniteNumberOf(time.h, time.hour,        time.hours,         0)! *   HOUR_IN_MILLISECONDS

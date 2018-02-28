@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var lenientime_1 = require("./lenientime");
 var utils_1 = require("./utils");
 function parseIntoMilliseconds(time) {
     switch (typeof time) {
@@ -17,8 +16,8 @@ function parseIntoMilliseconds(time) {
 }
 exports.default = parseIntoMilliseconds;
 function parseLenientimeLike(time) {
-    if (time instanceof lenientime_1.default) {
-        return time.totalMilliseconds;
+    if (typeof time.totalMilliseconds === 'number') {
+        return utils_1.normalizeMillisecondsInOneDay(time.totalMilliseconds);
     }
     var totalMilliseconds = utils_1.firstFiniteNumberOf(time.h, time.hour, time.hours, 0) * utils_1.HOUR_IN_MILLISECONDS
         + utils_1.firstFiniteNumberOf(time.m, time.minute, time.minutes, 0) * utils_1.MINUTE_IN_MILLISECONDS
