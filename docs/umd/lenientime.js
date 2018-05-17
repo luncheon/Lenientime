@@ -194,7 +194,7 @@ function tokenAdjuster(min, max, length, pad) {
 function format(template, time) {
     return String(template).replace(tokenPattern(), function (token) { return token[0] === '\\' ? token[1] : time[token]; });
 }
-function findToken(template, value, position) {
+function tokenAt(template, value, position) {
     var tokens = tokenizeTemplate(template);
     var offset = 0;
     var previuosLastIndex = 0;
@@ -636,7 +636,7 @@ function adjustOnArrowKeys(options) {
         if (value) {
             // const caretPosition = input.selectionDirection === 'backward' ? input.selectionStart : input.selectionEnd
             var caretPosition = input.selectionStart;
-            var token = findToken(template, value, caretPosition);
+            var token = caretPosition === null ? undefined : tokenAt(template, value, caretPosition);
             if (token) {
                 var amount = (which === 38 ? 1 : -1) * (parseFloat(dataset[adjustOnArrowKeysAttributeName]) || 1);
                 var adjustedValue = token.adjust(amount, true);
@@ -650,7 +650,7 @@ function adjustOnArrowKeys(options) {
         }
         else {
             input.value = lenientime.ZERO.format(template);
-            var token = findToken(template, input.value, 0);
+            var token = tokenAt(template, input.value, 0);
             if (token) {
                 input.setSelectionRange(token.index, token.index + token.value.length);
             }

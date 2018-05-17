@@ -65,7 +65,7 @@ export function format(template: string, time: LenientimeFormattable) {
   return String(template).replace(tokenPattern(), token => token[0] === '\\' ? token[1] : time[token as keyof LenientimeFormattable])
 }
 
-export function findToken(template: string, value: string, position: number): undefined | {
+export function tokenAt(template: string, value: string, position: number): undefined | {
   /** @example 'hh' */
   property: string
   /** @example '12' */
@@ -103,15 +103,13 @@ export function findToken(template: string, value: string, position: number): un
   return
 }
 
-interface TemplateToken {
-  index: number
-  property: string
-  literal: boolean
-}
-
-function tokenizeTemplate(template: string): TemplateToken[] {
+export function tokenizeTemplate(template: string) {
   const pattern = tokenPattern()
-  const tokens: TemplateToken[] = []
+  const tokens: {
+    index:    number
+    property: string
+    literal:  boolean
+  }[] = []
   let previousLastIndex = 0
   let match: RegExpExecArray | null
   while (match = pattern.exec(template)) {  // tslint:disable-line:no-conditional-assignment

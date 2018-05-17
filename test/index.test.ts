@@ -1,4 +1,5 @@
 import lenientime from '../src/core'
+import { tokenAt } from '../src/core/token'
 import { padEnd } from '../src/core/utils'
 
 const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds))
@@ -89,4 +90,48 @@ test('now', async done => {
   expect(lenientimeParseNow.minutes).toBe(dateNow.getMinutes())
   expect(lenientimeParseNow.hours)  .toBe(dateNow.getHours())
   done()
+})
+
+describe('tokenAt', () => {
+  test('h:m:s a / 12:34:56 pm', () => {
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  0)).toMatchObject({ property: 'h', index: 0, value: '12' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  1)).toMatchObject({ property: 'h', index: 0, value: '12' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  2)).toMatchObject({ property: 'h', index: 0, value: '12' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  3)).toMatchObject({ property: 'm', index: 3, value: '34' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  4)).toMatchObject({ property: 'm', index: 3, value: '34' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  5)).toMatchObject({ property: 'm', index: 3, value: '34' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  6)).toMatchObject({ property: 's', index: 6, value: '56' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  7)).toMatchObject({ property: 's', index: 6, value: '56' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  8)).toMatchObject({ property: 's', index: 6, value: '56' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm',  9)).toMatchObject({ property: 'a', index: 9, value: 'pm' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm', 10)).toMatchObject({ property: 'a', index: 9, value: 'pm' })
+    expect(tokenAt('h:m:s a', '12:34:56 pm', 11)).toMatchObject({ property: 'a', index: 9, value: 'pm' })
+  })
+
+  test('H:m:s a / 1:2:3 pm', () => {
+    expect(tokenAt('H:m:s a', '1:2:3 pm', 0)).toMatchObject({ property: 'H', index: 0, value: '1' })
+    expect(tokenAt('H:m:s a', '1:2:3 pm', 1)).toMatchObject({ property: 'H', index: 0, value: '1' })
+    expect(tokenAt('H:m:s a', '1:2:3 pm', 2)).toMatchObject({ property: 'm', index: 2, value: '2' })
+    expect(tokenAt('H:m:s a', '1:2:3 pm', 3)).toMatchObject({ property: 'm', index: 2, value: '2' })
+    expect(tokenAt('H:m:s a', '1:2:3 pm', 4)).toMatchObject({ property: 's', index: 4, value: '3' })
+    expect(tokenAt('H:m:s a', '1:2:3 pm', 5)).toMatchObject({ property: 's', index: 4, value: '3' })
+    expect(tokenAt('H:m:s a', '1:2:3 pm', 6)).toMatchObject({ property: 'a', index: 6, value: 'pm' })
+    expect(tokenAt('H:m:s a', '1:2:3 pm', 7)).toMatchObject({ property: 'a', index: 6, value: 'pm' })
+    expect(tokenAt('H:m:s a', '1:2:3 pm', 8)).toMatchObject({ property: 'a', index: 6, value: 'pm' })
+  })
+
+  test('A HH:m:s / PM 12:3:4', () => {
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  0)).toMatchObject({ property: 'A',  index: 0, value: 'PM' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  1)).toMatchObject({ property: 'A',  index: 0, value: 'PM' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  2)).toMatchObject({ property: 'A',  index: 0, value: 'PM' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  3)).toMatchObject({ property: 'HH', index: 3, value: '01' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  4)).toMatchObject({ property: 'HH', index: 3, value: '01' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  5)).toMatchObject({ property: 'HH', index: 3, value: '01' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  6)).toMatchObject({ property: 'mm', index: 6, value: '02' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  7)).toMatchObject({ property: 'mm', index: 6, value: '02' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  8)).toMatchObject({ property: 'mm', index: 6, value: '02' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03',  9)).toMatchObject({ property: 'ss', index: 9, value: '03' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03', 10)).toMatchObject({ property: 'ss', index: 9, value: '03' })
+    expect(tokenAt('A HH:mm:ss', 'PM 01:02:03', 11)).toMatchObject({ property: 'ss', index: 9, value: '03' })
+  })
 })

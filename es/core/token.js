@@ -36,7 +36,7 @@ function tokenAdjuster(min, max, length, pad) {
 export function format(template, time) {
     return String(template).replace(tokenPattern(), function (token) { return token[0] === '\\' ? token[1] : time[token]; });
 }
-export function findToken(template, value, position) {
+export function tokenAt(template, value, position) {
     var tokens = tokenizeTemplate(template);
     var offset = 0;
     var previuosLastIndex = 0;
@@ -68,7 +68,7 @@ export function findToken(template, value, position) {
     }
     return;
 }
-function tokenizeTemplate(template) {
+export function tokenizeTemplate(template) {
     var pattern = tokenPattern();
     var tokens = [];
     var previousLastIndex = 0;

@@ -1,5 +1,5 @@
 import lenientime from '../core'
-import { findToken } from '../core/token'
+import { tokenAt } from '../core/token'
 import dispatchInputEvent from './dispatch-input-event'
 
 // <input data-lenientime>
@@ -31,7 +31,7 @@ export default function adjustOnArrowKeys(options?: { dataAttributeName?: string
     if (value) {
       // const caretPosition = input.selectionDirection === 'backward' ? input.selectionStart : input.selectionEnd
       const caretPosition = input.selectionStart
-      const token = findToken(template, value, caretPosition)
+      const token = caretPosition === null ? undefined : tokenAt(template, value, caretPosition)
       if (token) {
         const amount = (which === 38 ? 1 : -1) * (parseFloat(dataset[adjustOnArrowKeysAttributeName]!) || 1)
         const adjustedValue = token.adjust(amount, true)
@@ -44,7 +44,7 @@ export default function adjustOnArrowKeys(options?: { dataAttributeName?: string
       }
     } else {
       input.value = lenientime.ZERO.format(template)
-      const token = findToken(template, input.value, 0)
+      const token = tokenAt(template, input.value, 0)
       if (token) {
         input.setSelectionRange(token.index, token.index + token.value.length)
       }

@@ -39,7 +39,7 @@ function format(template, time) {
     return String(template).replace(tokenPattern(), function (token) { return token[0] === '\\' ? token[1] : time[token]; });
 }
 exports.format = format;
-function findToken(template, value, position) {
+function tokenAt(template, value, position) {
     var tokens = tokenizeTemplate(template);
     var offset = 0;
     var previuosLastIndex = 0;
@@ -71,7 +71,7 @@ function findToken(template, value, position) {
     }
     return;
 }
-exports.findToken = findToken;
+exports.tokenAt = tokenAt;
 function tokenizeTemplate(template) {
     var pattern = tokenPattern();
     var tokens = [];
@@ -96,3 +96,4 @@ function tokenizeTemplate(template) {
     }
     return tokens;
 }
+exports.tokenizeTemplate = tokenizeTemplate;

@@ -23,7 +23,7 @@ export interface LenientimeFormattable {
     readonly AA: string;
 }
 export declare function format(template: string, time: LenientimeFormattable): string;
-export declare function findToken(template: string, value: string, position: number): undefined | {
+export declare function tokenAt(template: string, value: string, position: number): undefined | {
     /** @example 'hh' */
     property: string;
     /** @example '12' */
@@ -31,3 +31,8 @@ export declare function findToken(template: string, value: string, position: num
     index: number;
     adjust: (amount: number, cyclic?: boolean) => string | undefined;
 };
+export declare function tokenizeTemplate(template: string): {
+    index: number;
+    property: string;
+    literal: boolean;
+}[];

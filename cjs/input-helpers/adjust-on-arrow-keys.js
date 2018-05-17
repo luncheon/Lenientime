@@ -28,7 +28,7 @@ function adjustOnArrowKeys(options) {
         if (value) {
             // const caretPosition = input.selectionDirection === 'backward' ? input.selectionStart : input.selectionEnd
             var caretPosition = input.selectionStart;
-            var token = token_1.findToken(template, value, caretPosition);
+            var token = caretPosition === null ? undefined : token_1.tokenAt(template, value, caretPosition);
             if (token) {
                 var amount = (which === 38 ? 1 : -1) * (parseFloat(dataset[adjustOnArrowKeysAttributeName]) || 1);
                 var adjustedValue = token.adjust(amount, true);
@@ -42,7 +42,7 @@ function adjustOnArrowKeys(options) {
         }
         else {
             input.value = core_1.default.ZERO.format(template);
-            var token = token_1.findToken(template, input.value, 0);
+            var token = token_1.tokenAt(template, input.value, 0);
             if (token) {
                 input.setSelectionRange(token.index, token.index + token.value.length);
             }
