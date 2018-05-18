@@ -612,14 +612,11 @@ function dispatchInputEvent(inputElement) {
 }
 
 // <input data-lenientime>
-// <input data-lenientime="HH:mm:ss.SSS">
-// <input data-lenientime-adjust-on-arrow-keys>
-// <input data-lenientime-adjust-on-arrow-keys data-lenientime-format="HH:mm:ss.SSS">
-// <input data-lenientime-adjust-on-arrow-keys="-1" data-lenientime-format="HH:mm:ss.SSS">
+// <input data-lenientime="HH:mm:ss.SSS" data-lenientime-adjust-on-arrow-keys="-1">
 function adjustOnArrowKeys(options) {
     var dataAttributeName = options && options.dataAttributeName || 'lenientime';
-    var adjustOnArrowKeysAttributeName = dataAttributeName + 'AdjustOnArrowKeys';
-    var formatAttributeName = dataAttributeName + 'Format';
+    var formatSelector = options && options.formatSelector || (function (input) { return input.dataset.lenientime; });
+    var amountSelector = options && options.amountSelector || (function (input) { return parseInt(input.dataset.lenientimeAdjustOnArrowKeysAttributeName, 10); });
     addEventListener('keydown', function (event) {
         var which = event.which;
         if ((which !== 38 && which !== 40) || event.altKey || event.ctrlKey || event.metaKey) {
@@ -627,18 +624,18 @@ function adjustOnArrowKeys(options) {
         }
         var input = event.target;
         var dataset = input.dataset;
-        if (!(adjustOnArrowKeysAttributeName in dataset || dataAttributeName in dataset)) {
+        if (!(dataAttributeName in dataset)) {
             return;
         }
         event.preventDefault();
-        var template = dataset[formatAttributeName] || dataset[dataAttributeName] || 'HH:mm';
+        var template = formatSelector(input) || 'HH:mm';
         var value = input.value;
         if (value) {
             // const caretPosition = input.selectionDirection === 'backward' ? input.selectionStart : input.selectionEnd
             var caretPosition = input.selectionStart;
             var token = caretPosition === null ? undefined : tokenAt(template, value, caretPosition);
             if (token) {
-                var amount = (which === 38 ? 1 : -1) * (parseFloat(dataset[adjustOnArrowKeysAttributeName]) || 1);
+                var amount = (which === 38 ? 1 : -1) * (options && options.amountSelector && options.amountSelector(input) || 1);
                 var adjustedValue = token.adjust(amount, true);
                 if (adjustedValue !== undefined) {
                     var tokenIndex = token.index;
@@ -660,20 +657,17 @@ function adjustOnArrowKeys(options) {
 }
 
 // <input data-lenientime>
-// <input data-lenientime data-lenientime-format="HH:mm:ss.SSS">
-// <input data-lenientime-complete>
-// <input data-lenientime-complete data-lenientime-format="HH:mm:ss.SSS">
+// <input data-lenientime="HH:mm:ss.SSS">
 function complete(options) {
     var dataAttributeName = options && options.dataAttributeName || 'lenientime';
-    var completeAttributeName = dataAttributeName + 'Complete';
-    var formatAttributeName = dataAttributeName + 'Format';
+    var formatSelector = options && options.formatSelector || (function (input) { return input.dataset.lenientime; });
     addEventListener('change', function (event) {
         var input = event.target;
         var value = input.value;
         var dataset = input.dataset;
-        if (value && (completeAttributeName in dataset || dataAttributeName in dataset)) {
+        if (value && dataAttributeName in dataset) {
             var time = lenientime(value);
-            var completed = time.valid ? time.format(dataset[formatAttributeName] || dataset[dataAttributeName] || 'HH:mm') : '';
+            var completed = time.valid ? time.format(formatSelector(input) || 'HH:mm') : '';
             if (completed !== value) {
                 input.value = completed;
                 dispatchInputEvent(input);

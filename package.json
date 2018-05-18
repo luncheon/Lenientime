@@ -9,8 +9,7 @@
   "jsdelivr": "./umd/lenientime.min.js",
   "unpkg": "./umd/lenientime.min.js",
   "scripts": {
-    "rebuild": "npm run clean && npm run build",
-    "build": "npm run lint && npm run build:umd && npm run build:cjs && npm run build:es && npm run build:docs && npm test",
+    "build": "npm run clean && npm run lint && npm run build:umd && npm run build:cjs && npm run build:es && npm run build:docs && npm test",
     "build:umd": "rollup -c && uglifyjs -m -o umd/lenientime.min.js umd/lenientime.js && cpx umd/**/* docs/umd/",
     "build:cjs": "tsc -p .",
     "build:es": "tsc -p . -m es2015 --outDir ./es -d",
