@@ -73,7 +73,7 @@ export function tokenizeTemplate(template) {
     var tokens = [];
     var previousLastIndex = 0;
     var match;
-    while (match = pattern.exec(template)) {
+    while (match = pattern.exec(template)) { // tslint:disable-line:no-conditional-assignment
         var index = match.index;
         var lastIndex = pattern.lastIndex;
         if (previousLastIndex !== index) {

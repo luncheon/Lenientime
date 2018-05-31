@@ -33,6 +33,7 @@ function parseLenientimeLike(time) {
 }
 function parseString(s) {
     s = s && String(s)
+        // fullwidth -> halfwidth
         .replace(/[\uff00-\uffef]/g, function (token) { return String.fromCharCode(token.charCodeAt(0) - 0xfee0); })
         .replace(/\s/g, '')
         .replace(/(a|p)\.?m?\.?$/i, function ($0, $1) { return $1.toLowerCase(); });

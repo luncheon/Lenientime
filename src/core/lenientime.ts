@@ -52,13 +52,13 @@ export default class Lenientime implements LenientimeLike, LenientimeFormattable
   get SSS() { return this.invalid ? '---' : padEnd(this.millisecond, 3, '0') }
 
   /** "am" | "pm" | "--" */
-  get a()   { return this.invalid ? '--'   : this.am ? 'am' : 'pm' }
+  get a(): 'am' | 'pm' | '--' { return this.invalid ? '--'   : this.am ? 'am' : 'pm' }
   /** "AM" | "PM" | "--" */
-  get A()   { return this.invalid ? '--'   : this.am ? 'AM' : 'PM' }
+  get A(): 'AM' | 'PM' | '--' { return this.invalid ? '--'   : this.am ? 'AM' : 'PM' }
   /** "a.m." | "p.m." | "----" */
-  get aa()  { return this.invalid ? '----' : this.am ? 'a.m.' : 'p.m.' }
+  get aa(): 'a.m.' | 'p.m.' | '----' { return this.invalid ? '----' : this.am ? 'a.m.' : 'p.m.' }
   /** "A.M." | "P.M." | "----" */
-  get AA()  { return this.invalid ? '----' : this.am ? 'A.M.' : 'P.M.' }
+  get AA(): 'A.M.' | 'P.M.' | '----' { return this.invalid ? '----' : this.am ? 'A.M.' : 'P.M.' }
 
   /** Hour string in 24-hour notation with zero padding: ["00".."23"] | "--" */
   get HH()  { return this.invalid ? '--'   : padStart(this.H, 2, '0') }

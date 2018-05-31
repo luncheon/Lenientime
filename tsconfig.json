@@ -12,6 +12,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": false,
     "experimentalDecorators": true,
+    "newLine": "LF",
     "baseUrl": ".",
     "types": []
   },

@@ -43,13 +43,13 @@ export default class Lenientime implements LenientimeLike, LenientimeFormattable
     /** 3 fractional digits string of second: ["000".."999"] | "---" */
     readonly SSS: any;
     /** "am" | "pm" | "--" */
-    readonly a: string;
+    readonly a: 'am' | 'pm' | '--';
     /** "AM" | "PM" | "--" */
-    readonly A: string;
+    readonly A: 'AM' | 'PM' | '--';
     /** "a.m." | "p.m." | "----" */
-    readonly aa: string;
+    readonly aa: 'a.m.' | 'p.m.' | '----';
     /** "A.M." | "P.M." | "----" */
-    readonly AA: string;
+    readonly AA: 'A.M.' | 'P.M.' | '----';
     /** Hour string in 24-hour notation with zero padding: ["00".."23"] | "--" */
     readonly HH: any;
     /** Hour string in 24-hour notation with space padding: [" 0".."23"] | "--" */
