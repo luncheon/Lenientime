@@ -23,7 +23,7 @@
   "author": "",
   "license": "WTFPL",
   "devDependencies": {
-    "@types/jest": "^22.2.3",
+    "@types/jest": "^23.0.0",
     "cpx": "^1.5.0",
     "jest": "^23.1.0",
     "rimraf": "^2.6.2",
@@ -31,8 +31,8 @@
     "ts-jest": "^22.4.6",
     "tslint": "^5.10.0",
     "typedoc": "^0.11.1",
-    "typescript": "^2.8.4",
-    "uglify-js": "^3.3.28",
+    "typescript": "^2.9.1",
+    "uglify-js": "^3.4.0",
     "umd": "^3.0.3"
   },
   "jest": {
