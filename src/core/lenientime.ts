@@ -36,9 +36,9 @@ export default class Lenientime implements LenientimeLike, LenientimeFormattable
 
   /** Hour string in 24-hour notation without padding: ["0".."23"] | "-" */
   get H()   { return this.invalid ? '-'   : String(this.hour) }
-  /** Hour string in 1-based-12-hour notation without padding: ["1".."12"] | "-" */
+  /** Hour string in 1-based 12-hour notation without padding: ["1".."12"] | "-" */
   get h()   { return this.invalid ? '-'   : String(this.hour12) }
-  /** Hour string in 0-based-12-hour notation without padding: ["0".."11"] | "-" */
+  /** Hour string in 1-based 24-hour notation without padding: ["1".."24"] | "-" */
   get k()   { return this.invalid ? '-'   : String((this.hour + 23) % 24 + 1) }
   /** Minute string without padding: ["0".."59"] | "-" */
   get m()   { return this.invalid ? '-'   : String(this.minute) }
@@ -68,9 +68,9 @@ export default class Lenientime implements LenientimeLike, LenientimeFormattable
   get hh()  { return this.invalid ? '--'   : padStart(this.h, 2, '0') }
   /** hour string in 1-based 12-hour notation with space padding: [" 1".."12"] | "--" */
   get _h()  { return this.invalid ? '--'   : padStart(this.h, 2, ' ') }
-  /** Hour string in 0-based 12-hour notation with zero padding: ["00".."11"] | "--" */
+  /** Hour string in 1-based 24-hour notation with zero padding: ["01".."24"] | "--" */
   get kk()  { return this.invalid ? '--'   : padStart(this.k, 2, '0') }
-  /** Hour string in 0-based 12-hour notation with space padding: [" 0".."11"] | "--" */
+  /** Hour string in 1-based 24-hour notation with space padding: [" 1".."24"] | "--" */
   get _k()  { return this.invalid ? '--'   : padStart(this.k, 2, ' ') }
   /** Minute string with zero padding: ["00".."59"] | "--" */
   get mm()  { return this.invalid ? '--'   : padStart(this.m, 2, '0') }

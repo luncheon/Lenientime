@@ -333,13 +333,13 @@
           configurable: true
       });
       Object.defineProperty(Lenientime.prototype, "h", {
-          /** Hour string in 1-based-12-hour notation without padding: ["1".."12"] | "-" */
+          /** Hour string in 1-based 12-hour notation without padding: ["1".."12"] | "-" */
           get: function () { return this.invalid ? '-' : String(this.hour12); },
           enumerable: true,
           configurable: true
       });
       Object.defineProperty(Lenientime.prototype, "k", {
-          /** Hour string in 0-based-12-hour notation without padding: ["0".."11"] | "-" */
+          /** Hour string in 1-based 24-hour notation without padding: ["1".."24"] | "-" */
           get: function () { return this.invalid ? '-' : String((this.hour + 23) % 24 + 1); },
           enumerable: true,
           configurable: true
@@ -423,13 +423,13 @@
           configurable: true
       });
       Object.defineProperty(Lenientime.prototype, "kk", {
-          /** Hour string in 0-based 12-hour notation with zero padding: ["00".."11"] | "--" */
+          /** Hour string in 1-based 24-hour notation with zero padding: ["01".."24"] | "--" */
           get: function () { return this.invalid ? '--' : padStart(this.k, 2, '0'); },
           enumerable: true,
           configurable: true
       });
       Object.defineProperty(Lenientime.prototype, "_k", {
-          /** Hour string in 0-based 12-hour notation with space padding: [" 0".."11"] | "--" */
+          /** Hour string in 1-based 24-hour notation with space padding: [" 1".."24"] | "--" */
           get: function () { return this.invalid ? '--' : padStart(this.k, 2, ' '); },
           enumerable: true,
           configurable: true

@@ -28,9 +28,9 @@ export default class Lenientime implements LenientimeLike, LenientimeFormattable
     readonly milliseconds: number;
     /** Hour string in 24-hour notation without padding: ["0".."23"] | "-" */
     readonly H: string;
-    /** Hour string in 1-based-12-hour notation without padding: ["1".."12"] | "-" */
+    /** Hour string in 1-based 12-hour notation without padding: ["1".."12"] | "-" */
     readonly h: string;
-    /** Hour string in 0-based-12-hour notation without padding: ["0".."11"] | "-" */
+    /** Hour string in 1-based 24-hour notation without padding: ["1".."24"] | "-" */
     readonly k: string;
     /** Minute string without padding: ["0".."59"] | "-" */
     readonly m: string;
@@ -58,9 +58,9 @@ export default class Lenientime implements LenientimeLike, LenientimeFormattable
     readonly hh: any;
     /** hour string in 1-based 12-hour notation with space padding: [" 1".."12"] | "--" */
     readonly _h: any;
-    /** Hour string in 0-based 12-hour notation with zero padding: ["00".."11"] | "--" */
+    /** Hour string in 1-based 24-hour notation with zero padding: ["01".."24"] | "--" */
     readonly kk: any;
-    /** Hour string in 0-based 12-hour notation with space padding: [" 0".."11"] | "--" */
+    /** Hour string in 1-based 24-hour notation with space padding: [" 1".."24"] | "--" */
     readonly _k: any;
     /** Minute string with zero padding: ["00".."59"] | "--" */
     readonly mm: any;
